@@ -25,7 +25,7 @@ namespace Better.Commons.EditorAddons.Utility
         private const string ArrayElementDotName = "." + ArrayElementName;
         private const string ArrayElementName = "___ArrayElement___";
 
-        private static readonly Dictionary<CacheKey, CachedFieldInfo> FieldInfoFromPropertyPathCache = new Dictionary<CacheKey, CachedFieldInfo>();
+        private static readonly Dictionary<CachePropertyKey, CachedFieldInfo> FieldInfoFromPropertyPathCache = new Dictionary<CachePropertyKey, CachedFieldInfo>();
 
         [DidReloadScripts]
         private static void Reload()
@@ -69,7 +69,7 @@ namespace Better.Commons.EditorAddons.Utility
         {
             var arrayElement = ArrayDataWithIndexRegexAny.IsMatch(propertyPath);
             propertyPath = ArrayDataWithIndexRegex.Replace(propertyPath, ArrayElementDotName);
-            var cache = new CacheKey(type, propertyPath);
+            var cache = new CachePropertyKey(type, propertyPath);
 
             if (FieldInfoFromPropertyPathCache.TryGetValue(cache, out var fieldInfoCache))
             {
@@ -107,7 +107,7 @@ namespace Better.Commons.EditorAddons.Utility
 
                 if (foundField == null)
                 {
-                    var cacheKey = new CacheKey(originalType, propertyPath);
+                    var cacheKey = new CachePropertyKey(originalType, propertyPath);
                     FieldInfoFromPropertyPathCache.Add(cacheKey, null);
                     return true;
                 }

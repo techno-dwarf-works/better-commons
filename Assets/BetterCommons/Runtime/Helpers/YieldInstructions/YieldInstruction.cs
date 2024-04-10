@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Better.Commons.Runtime.Helpers.YieldInstractions
+namespace Better.Commons.Runtime.Helpers.YieldInstructions
 {
     public abstract class YieldInstruction<T> : CustomYieldInstruction
     {

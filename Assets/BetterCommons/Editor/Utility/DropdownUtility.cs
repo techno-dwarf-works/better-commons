@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Reflection;
+using Better.Commons.EditorAddons.DropDown.Base;
 using Better.Commons.EditorAddons.Helpers;
 using Better.Commons.Runtime.DataStructures.Tree;
 using UnityEditor;
 using UnityEngine;
 
-namespace Better.Commons.EditorAddons.DropDown
+namespace Better.Commons.EditorAddons.Utility
 {
-    internal static class DropdownGUI
+    internal static class DropdownUtility
     {
         private const string SearchFieldName = "SearchField";
         private static Vector2 _iconSize = new Vector2(13f, 13f);
         private static readonly MethodInfo _setMouseTooltipMethod;
 
-        static DropdownGUI()
+        static DropdownUtility()
         {
             var bindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy;
             _setMouseTooltipMethod = typeof(GUIStyle).GetMethod("SetMouseTooltip",bindingFlags);

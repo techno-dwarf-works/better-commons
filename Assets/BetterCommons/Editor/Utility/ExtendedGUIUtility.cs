@@ -1,11 +1,13 @@
 ﻿using System;
+using Better.Commons.EditorAddons.Enums;
+using Better.Commons.EditorAddons.Extensions;
 using Better.Commons.Runtime.Utility;
 using UnityEditor;
 using UnityEngine;
 
 namespace Better.Commons.EditorAddons.Utility
 {
-    public static class DrawersUtility
+    public static class ExtendedGUIUtility
     {
         private static float _spaceHeight = 6f;
         private static GUIStyle _helpBoxStyle;
@@ -143,7 +145,7 @@ namespace Better.Commons.EditorAddons.Utility
                 return;
             }
 
-            var icon = GetIconName(type);
+            var icon = type.GetIconName();
             if (useSpace)
             {
                 EditorGUILayout.Space(_spaceHeight);
@@ -161,7 +163,7 @@ namespace Better.Commons.EditorAddons.Utility
         /// <param name="style"></param>
         private static void HelpBox(string message, Rect position, IconType type, GUIStyle style)
         {
-            var icon = GetIconName(type);
+            var icon = type.GetIconName();
             var rect = new Rect(position);
             var withIcon = EditorGUIUtility.TrTextContentWithIcon(message, icon);
             rect.height = style.CalcHeight(withIcon, rect.width);
@@ -197,14 +199,14 @@ namespace Better.Commons.EditorAddons.Utility
 
         public static float GetHelpBoxHeight(float width, string message, IconType type)
         {
-            var icon = GetIconName(type);
+            var icon = type.GetIconName();
             var withIcon = UnityEditor.EditorGUIUtility.TrTextContentWithIcon(message, icon);
             return CreateOrReturnHelpBoxStyle().CalcHeight(withIcon, width);
         }
 
         public static float GetHelpBoxHeight(string message, IconType type)
         {
-            var icon = GetIconName(type);
+            var icon = type.GetIconName();
             var withIcon = UnityEditor.EditorGUIUtility.TrTextContentWithIcon(message, icon);
             return CreateOrReturnHelpBoxStyle().CalcHeight(withIcon, UnityEditor.EditorGUIUtility.currentViewWidth);
         }
@@ -267,35 +269,6 @@ namespace Better.Commons.EditorAddons.Utility
             return bufferSelected;
         }
 
-        /// <summary>
-        /// Getting Icon Name from Unity Inspector
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static string GetIconName(IconType type)
-        {
-            var icon = type switch
-            {
-                IconType.InfoMessage => "console.infoicon",
-                IconType.WarningMessage => "console.warnicon",
-                IconType.ErrorMessage => "console.erroricon",
-                IconType.Info => "d__Help@2x",
-                IconType.View => "d_scenevis_visible_hover@2x",
-                IconType.Close => "d_winbtn_win_close_a@2x",
-                IconType.Search => "d_Search Icon",
-                IconType.WhiteLine => "d_animationanimated",
-                IconType.GrayLine => "d_animationnocurve",
-                IconType.WhiteDropdown => "d_icon dropdown",
-                IconType.GrayDropdown => "icon dropdown@2x",
-                IconType.Checkmark => "d_Valid@2x",
-                IconType.GrayPlayButton => "d_PlayButton",
-                IconType.PlusMore => "d_Toolbar Plus More@2x",
-                IconType.Minus => "d_Toolbar Minus@2x",
-                _ => ""
-            };
-            return icon;
-        }
-
         public static bool IsLeftButtonDown()
         {
             return IsMouseButton(EventType.MouseDown, MouseButtonLeft);
@@ -355,28 +328,6 @@ namespace Better.Commons.EditorAddons.Utility
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Getting Icon Name from Unity Inspector
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static Texture GetIcon(IconType type)
-        {
-            var icon = GetIconName(type);
-            return UnityEditor.EditorGUIUtility.IconContent(icon).image;
-        }
-
-        /// <summary>
-        /// Getting Icon Name from Unity Inspector
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static GUIContent GetIconGUIContent(IconType type)
-        {
-            var icon = GetIconName(type);
-            return UnityEditor.EditorGUIUtility.IconContent(icon);
         }
     }
 }

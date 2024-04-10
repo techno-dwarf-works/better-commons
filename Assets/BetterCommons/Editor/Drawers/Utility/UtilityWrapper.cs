@@ -1,4 +1,4 @@
-﻿namespace Better.Commons.EditorAddons.Drawers.Utilities
+﻿namespace Better.Commons.EditorAddons.Drawers.Utility
 {
     public abstract class UtilityWrapper
     {

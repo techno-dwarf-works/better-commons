@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Better.Commons.EditorAddons.CustomEditors.Attributes;
+using Better.Commons.EditorAddons.CustomEditors.Base;
 using Better.Commons.EditorAddons.Extensions;
 using Better.Commons.Runtime.Extensions;
 using UnityEditor;
@@ -13,8 +15,8 @@ namespace Better.Commons.EditorAddons.CustomEditors
     [CustomEditor(typeof(Object), true)]
     internal sealed class MultiEditor : Editor
     {
-        private List<EditorExtension> _preExtensions = new List<EditorExtension>();
-        private List<EditorExtension> _afterExtensions = new List<EditorExtension>();
+        private List<ExtendedEditor> _preEditors = new List<ExtendedEditor>();
+        private List<ExtendedEditor> _postEditors = new List<ExtendedEditor>();
         private bool _overrideDefault;
 
         private void OnEnable()
@@ -56,7 +58,7 @@ namespace Better.Commons.EditorAddons.CustomEditors
                 return att.EditorFor == targetType;
             }
 
-            return typeof(EditorExtension).GetAllInheritedTypesWithoutUnityObject().Select(type => (type, type.GetCustomAttribute<MultiEditorAttribute>()))
+            return typeof(ExtendedEditor).GetAllInheritedTypesWithoutUnityObject().Select(type => (type, type.GetCustomAttribute<MultiEditorAttribute>()))
                 .Where(WherePredicate).OrderBy(x => x.Item2.Order).ToArray();
         }
 
@@ -75,15 +77,15 @@ namespace Better.Commons.EditorAddons.CustomEditors
                     _overrideDefault = true;
                 }
 
-                var extension = (EditorExtension)Activator.CreateInstance(type, paramArray);
+                var extension = (ExtendedEditor)Activator.CreateInstance(type, paramArray);
                 extension.OnEnable();
                 if (betterEditorAttribute.Order < 0)
                 {
-                    _preExtensions.Add(extension);
+                    _preEditors.Add(extension);
                 }
                 else
                 {
-                    _afterExtensions.Add(extension);
+                    _postEditors.Add(extension);
                 }
             }
         }
@@ -92,9 +94,9 @@ namespace Better.Commons.EditorAddons.CustomEditors
         {
             using (var change = new EditorGUI.ChangeCheckScope())
             {
-                for (var i = 0; i < _preExtensions.Count; i++)
+                for (var i = 0; i < _preEditors.Count; i++)
                 {
-                    _preExtensions[i].OnInspectorGUI();
+                    _preEditors[i].OnInspectorGUI();
                 }
 
                 if (!_overrideDefault)
@@ -102,34 +104,34 @@ namespace Better.Commons.EditorAddons.CustomEditors
                     base.OnInspectorGUI();
                 }
 
-                for (var i = 0; i < _afterExtensions.Count; i++)
+                for (var i = 0; i < _postEditors.Count; i++)
                 {
-                    _afterExtensions[i].OnInspectorGUI();
+                    _postEditors[i].OnInspectorGUI();
                 }
 
                 if (!change.changed) return;
-                for (var i = 0; i < _preExtensions.Count; i++)
+                for (var i = 0; i < _preEditors.Count; i++)
                 {
-                    _preExtensions[i].OnChanged();
+                    _preEditors[i].OnChanged();
                 }
 
-                for (var i = 0; i < _afterExtensions.Count; i++)
+                for (var i = 0; i < _postEditors.Count; i++)
                 {
-                    _afterExtensions[i].OnChanged();
+                    _postEditors[i].OnChanged();
                 }
             }
         }
 
         private void OnDisable()
         {
-            for (var i = 0; i < _preExtensions.Count; i++)
+            for (var i = 0; i < _preEditors.Count; i++)
             {
-                _preExtensions[i].OnDisable();
+                _preEditors[i].OnDisable();
             }
 
-            for (var i = 0; i < _afterExtensions.Count; i++)
+            for (var i = 0; i < _postEditors.Count; i++)
             {
-                _afterExtensions[i].OnDisable();
+                _postEditors[i].OnDisable();
             }
         }
     }

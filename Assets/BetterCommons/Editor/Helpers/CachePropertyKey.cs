@@ -3,18 +3,18 @@ using Better.Commons.Runtime.Extensions;
 
 namespace Better.Commons.EditorAddons.Helpers
 {
-    public struct CacheKey : IEquatable<CacheKey>
+    public struct CachePropertyKey : IEquatable<CachePropertyKey>
     {
         private readonly Type _type;
         private readonly string _propertyPath;
 
-        public CacheKey(Type type, string propertyPath)
+        public CachePropertyKey(Type type, string propertyPath)
         {
             _type = type;
             _propertyPath = propertyPath;
         }
 
-        public bool Equals(CacheKey other)
+        public bool Equals(CachePropertyKey other)
         {
             return _type == other._type && _propertyPath.CompareOrdinal(other._propertyPath);
         }
@@ -22,7 +22,7 @@ namespace Better.Commons.EditorAddons.Helpers
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is CacheKey key && Equals(key);
+            return obj is CachePropertyKey key && Equals(key);
         }
 
         public override int GetHashCode()

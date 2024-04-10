@@ -1,5 +1,5 @@
 ﻿using System;
-using Better.Commons.EditorAddons.Drawers.Utilities;
+using Better.Commons.EditorAddons.Drawers.Utility;
 
 namespace Better.Commons.EditorAddons.Drawers.Base
 {

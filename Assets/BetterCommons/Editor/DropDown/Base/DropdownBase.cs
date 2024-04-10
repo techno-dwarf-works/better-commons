@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Better.Commons.EditorAddons.DropDown
+namespace Better.Commons.EditorAddons.DropDown.Base
 {
     public abstract class DropdownBase
     {

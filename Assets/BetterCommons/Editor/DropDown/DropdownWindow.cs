@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Better.Commons.EditorAddons.DropDown.Base;
 using Better.Commons.EditorAddons.Helpers;
 using Better.Commons.EditorAddons.Utility;
 using Better.Commons.Runtime.DataStructures.Tree;
@@ -70,11 +71,11 @@ namespace Better.Commons.EditorAddons.DropDown
         private void OnGUI()
         {
             EditorGUILayout.BeginVertical();
-            _searchText = DropdownGUI.DrawSearchField(_searchText, false);
+            _searchText = DropdownUtility.DrawSearchField(_searchText, false);
             var buffer = SearchResult(_currentNode, _searchText);
 
             var hasParent = _currentNode.Parent != null;
-            DropdownGUI.DrawHeader(hasParent ? _currentNode.Value.Content : _header,
+            DropdownUtility.DrawHeader(hasParent ? _currentNode.Value.Content : _header,
                 hasParent, OnBackClicked);
             var close = AnalyseUserInput(buffer);
             if (!close)
@@ -128,7 +129,7 @@ namespace Better.Commons.EditorAddons.DropDown
             {
                 var bufferContent = item.Value.Content;
                 size = Vector2.Max(buttonStyle.CalcSize(bufferContent), size);
-                if (DropdownGUI.DrawItem(item, item.Children.Count > 0, true))
+                if (DropdownUtility.DrawItem(item, item.Children.Count > 0, true))
                     shouldClose = item.Value.Invoke(this);
             }
 
@@ -194,7 +195,7 @@ namespace Better.Commons.EditorAddons.DropDown
             }
 
             _searchText = string.Empty;
-            DropdownGUI.ClearSearchField();
+            DropdownUtility.ClearSearchField();
 
             return false;
         }
@@ -202,7 +203,7 @@ namespace Better.Commons.EditorAddons.DropDown
         private void ResolveSize(Vector2 size)
         {
             var width = Mathf.Max(position.width, size.x + 50f);
-            var height = UnityEditor.EditorGUIUtility.singleLineHeight * _maxLines + DrawersUtility.SpaceHeight;
+            var height = UnityEditor.EditorGUIUtility.singleLineHeight * _maxLines + ExtendedGUIUtility.SpaceHeight;
             var copy = position;
             copy.position = _display;
             copy.width = width;
