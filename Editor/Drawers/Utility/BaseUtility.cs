@@ -5,7 +5,7 @@ using Better.Commons.EditorAddons.Drawers.WrappersTypeCollection;
 using Better.Commons.Runtime.Utility;
 using UnityEditor;
 
-namespace Better.Commons.EditorAddons.Drawers.Utilities
+namespace Better.Commons.EditorAddons.Drawers.Utility
 {
     public abstract class BaseUtility<THandler> where THandler : new()
     {

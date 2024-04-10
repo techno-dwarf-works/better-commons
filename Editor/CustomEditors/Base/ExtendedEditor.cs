@@ -1,18 +1,18 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Better.Commons.EditorAddons.CustomEditors
+namespace Better.Commons.EditorAddons.CustomEditors.Base
 {
     /// <summary>
     /// Class represents base types for <see cref="MultiEditor"/>
     /// <remarks>Use <see cref="_target"/> and <see cref="_serializedObject"/> as cached fields</remarks>
     /// </summary>
-    public abstract class EditorExtension
+    public abstract class ExtendedEditor
     {
         protected readonly Object _target;
         protected readonly SerializedObject _serializedObject;
 
-        protected EditorExtension(Object target, SerializedObject serializedObject)
+        protected ExtendedEditor(Object target, SerializedObject serializedObject)
         {
             _target = target;
             _serializedObject = serializedObject;

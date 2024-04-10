@@ -13,8 +13,7 @@ namespace Better.Commons.EditorAddons.EditorPopups
         public event Action FocusLost;
         public event Action Destroyed;
 
-        public static EditorPopup Initialize(Texture texture, Rect position, bool needUpdate,
-            bool destroyTexture = false)
+        public static EditorPopup Initialize(Texture texture, Rect position, bool needUpdate, bool destroyTexture = false)
         {
             var window = HasOpenInstances<EditorPopup>() ? GetWindow<EditorPopup>() : CreateInstance<EditorPopup>();
             window.position = position;

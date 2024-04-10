@@ -2,8 +2,8 @@
 using System.Reflection;
 using Better.Commons.EditorAddons.Comparers;
 using Better.Commons.EditorAddons.Drawers.Caching;
-using Better.Commons.EditorAddons.Drawers.Utilities;
-using Better.Commons.Runtime.Drawing.Attributes;
+using Better.Commons.EditorAddons.Drawers.Utility;
+using Better.Commons.Runtime.Drawers.Attributes;
 using Better.Commons.Runtime.Extensions;
 using UnityEditor;
 

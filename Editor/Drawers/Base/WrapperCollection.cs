@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Better.Commons.EditorAddons.Comparers;
-using Better.Commons.EditorAddons.Drawers.Utilities;
+using Better.Commons.EditorAddons.Drawers.Utility;
 using UnityEditor;
 
 namespace Better.Commons.EditorAddons.Drawers.Base

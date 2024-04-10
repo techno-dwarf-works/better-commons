@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Better.Commons.EditorAddons.CustomEditors
+namespace Better.Commons.EditorAddons.CustomEditors.Attributes
 {
     /// <summary>
     ///   <para>Tells an Editor class which run-time type it's an editor for.</para>

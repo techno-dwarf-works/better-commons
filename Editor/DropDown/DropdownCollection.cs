@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Better.Commons.EditorAddons.DropDown.Base;
+using Better.Commons.EditorAddons.Enums;
+using Better.Commons.EditorAddons.Extensions;
 using Better.Commons.EditorAddons.Utility;
 using Better.Commons.Runtime.DataStructures.Tree;
 using Better.Commons.Runtime.Utility;
@@ -77,7 +80,7 @@ namespace Better.Commons.EditorAddons.DropDown
         {
             if (bufferKey.image == null && state)
             {
-                bufferKey.image = DrawersUtility.GetIcon(IconType.Checkmark);
+                bufferKey.image = IconType.Checkmark.GetIcon();
             }
             return item.AddChild(new DropdownItem(bufferKey, onSelect, type));
         }
