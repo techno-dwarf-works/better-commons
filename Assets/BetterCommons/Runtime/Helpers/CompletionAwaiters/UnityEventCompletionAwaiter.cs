@@ -3,33 +3,27 @@ using UnityEngine.Events;
 
 namespace Better.Commons.Runtime.Helpers.CompletionAwaiters
 {
-    internal class UnityEventCompletionAwaiter<T> : BaseCompletionAwaiter<T>
+    public class UnityEventCompletionAwaiter<T> : CompletionAwaiter<UnityEvent<T>, T>
     {
-        private UnityEvent<T> _sourceEvent;
-
-        public UnityEventCompletionAwaiter(UnityEvent<T> sourceEvent, CancellationToken cancellationToken)
-            : base(cancellationToken)
+        public UnityEventCompletionAwaiter(UnityEvent<T> source, CancellationToken cancellationToken)
+            : base(source, cancellationToken)
         {
-            _sourceEvent = sourceEvent;
-            _sourceEvent.AddListener(OnSourceInvoked);
+            Source.AddListener(OnSourceInvoked);
         }
 
         private void OnSourceInvoked(T value) => SetResult(value);
-        protected override void OnCompleted(T result) => _sourceEvent.RemoveListener(OnSourceInvoked);
+        protected override void OnCompleted(T result) => Source.RemoveListener(OnSourceInvoked);
     }
 
-    internal class UnityEventCompletionAwaiter : BaseCompletionAwaiter<bool>
+    public class UnityEventCompletionAwaiter : CompletionAwaiter<UnityEvent, bool>
     {
-        private UnityEvent _sourceEvent;
-
-        public UnityEventCompletionAwaiter(UnityEvent sourceEvent, CancellationToken cancellationToken)
-            : base(cancellationToken)
+        public UnityEventCompletionAwaiter(UnityEvent source, CancellationToken cancellationToken)
+            : base(source, cancellationToken)
         {
-            _sourceEvent = sourceEvent;
-            _sourceEvent.AddListener(OnSourceInvoked);
+            Source.AddListener(OnSourceInvoked);
         }
 
         private void OnSourceInvoked() => SetResult(true);
-        protected override void OnCompleted(bool result) => _sourceEvent.RemoveListener(OnSourceInvoked);
+        protected override void OnCompleted(bool result) => Source.RemoveListener(OnSourceInvoked);
     }
 }

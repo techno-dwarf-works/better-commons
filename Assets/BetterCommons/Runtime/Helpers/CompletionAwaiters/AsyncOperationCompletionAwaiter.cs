@@ -6,22 +6,22 @@ using ThreadingTask = System.Threading.Tasks.Task;
 
 namespace Better.Commons.Runtime.Helpers.CompletionAwaiters
 {
-    internal class AsyncOperationCompletionAwaiter : BaseCompletionAwaiter<bool>
+    public class AsyncOperationCompletionAwaiter : CompletionAwaiter<AsyncOperation, bool>
     {
         private readonly IProgress<float> _progress;
 
-        public AsyncOperationCompletionAwaiter(AsyncOperation sourceOperation, IProgress<float> progress = null)
-            : base(CancellationToken.None)
+        public AsyncOperationCompletionAwaiter(AsyncOperation source, IProgress<float> progress = null)
+            : base(source, CancellationToken.None)
         {
             _progress = progress;
-            ProcessAsync(sourceOperation);
+            ProcessAsync();
         }
 
-        private async void ProcessAsync(AsyncOperation asyncOperation)
+        private async void ProcessAsync()
         {
-            while (!asyncOperation.IsRelativeCompleted())
+            while (!Source.IsRelativeCompleted())
             {
-                _progress?.Report(asyncOperation.progress);
+                _progress?.Report(Source.progress);
                 await ThreadingTask.Yield();
             }
 
