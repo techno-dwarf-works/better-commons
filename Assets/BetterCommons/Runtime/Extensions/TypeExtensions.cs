@@ -154,7 +154,7 @@ namespace Better.Commons.Runtime.Extensions
 
         public static IEnumerable<Type> GetAllInheritedTypes(this Type self, params Type[] excludes)
         {
-            return self.GetAllInheritedTypes().Except(excludes);
+            return self.GetAllInheritedTypes().Except(excludes, IsSubClassComparer.Instance);
         }
 
         public static IEnumerable<Type> GetAllInheritedTypesWithoutUnityObject(this Type self)
