@@ -54,7 +54,8 @@ namespace Better.Commons.EditorAddons.Utility
         /// <param name="fieldType"></param>
         /// <param name="attributeType"></param>
         /// <param name="property"></param>
-        public static void NotSupportedAttribute(Rect position, SerializedProperty property, GUIContent label, Type fieldType, Type attributeType)
+        /// <param name="offset"></param>
+        public static void NotSupportedAttribute(Rect position, SerializedProperty property, GUIContent label, Type fieldType, Type attributeType, float offset)
         {
             if (property == null)
             {
@@ -80,10 +81,24 @@ namespace Better.Commons.EditorAddons.Utility
                 return;
             }
 
-            HelpBoxFromRect(position, property, label, NotSupportedMessage(property.name, fieldType, attributeType), IconType.ErrorMessage);
+            HelpBoxFromRect(position, property, label, NotSupportedMessage(property.name, fieldType, attributeType), IconType.ErrorMessage, offset);
         }
 
-        public static void HelpBoxFromRect(Rect position, SerializedProperty property, GUIContent label, string message, IconType messageType)
+        /// <summary>
+        /// Not supported Inspector HelpBox with RTF text
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="label"></param>
+        /// <param name="fieldType"></param>
+        /// <param name="attributeType"></param>
+        /// <param name="property"></param>
+        public static void NotSupportedAttribute(Rect position, SerializedProperty property, GUIContent label, Type fieldType, Type attributeType)
+        {
+            var offset = EditorGUI.GetPropertyHeight(property, label, true) + SpaceHeight;
+            NotSupportedAttribute(position, property, label, fieldType, attributeType, offset);
+        }
+
+        public static void HelpBoxFromRect(Rect position, SerializedProperty property, GUIContent label, string message, IconType messageType, float offset = 0)
         {
             if (property == null)
             {
@@ -101,7 +116,7 @@ namespace Better.Commons.EditorAddons.Utility
 
             var lab = new GUIContent(label);
 
-            buffer.y += EditorGUI.GetPropertyHeight(property, label, true) + SpaceHeight;
+            buffer.y += offset;
 
             label.image = lab.image;
             label.text = lab.text;
@@ -200,15 +215,15 @@ namespace Better.Commons.EditorAddons.Utility
         public static float GetHelpBoxHeight(float width, string message, IconType type)
         {
             var icon = type.GetIconName();
-            var withIcon = UnityEditor.EditorGUIUtility.TrTextContentWithIcon(message, icon);
+            var withIcon = EditorGUIUtility.TrTextContentWithIcon(message, icon);
             return CreateOrReturnHelpBoxStyle().CalcHeight(withIcon, width);
         }
 
         public static float GetHelpBoxHeight(string message, IconType type)
         {
             var icon = type.GetIconName();
-            var withIcon = UnityEditor.EditorGUIUtility.TrTextContentWithIcon(message, icon);
-            return CreateOrReturnHelpBoxStyle().CalcHeight(withIcon, UnityEditor.EditorGUIUtility.currentViewWidth);
+            var withIcon = EditorGUIUtility.TrTextContentWithIcon(message, icon);
+            return CreateOrReturnHelpBoxStyle().CalcHeight(withIcon, EditorGUIUtility.currentViewWidth);
         }
 
         public static float GetHelpBoxHeight(GUIContent message)
@@ -219,7 +234,7 @@ namespace Better.Commons.EditorAddons.Utility
                 return 0;
             }
 
-            return CreateOrReturnHelpBoxStyle().CalcHeight(message, UnityEditor.EditorGUIUtility.currentViewWidth);
+            return CreateOrReturnHelpBoxStyle().CalcHeight(message, EditorGUIUtility.currentViewWidth);
         }
 
         public static float GetHelpBoxHeight(string message)
