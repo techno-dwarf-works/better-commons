@@ -1,7 +1,8 @@
 using System;
+using Better.Commons.Runtime.DataStructures.Ranges;
 using UnityEngine;
 
-namespace Better.Commons.Runtime.DataStructures.Ranges
+namespace Better.Commons.Runtime.Extensions
 {
     /// <summary>
     /// Provides extension methods for Range of different types to perform common operations.
