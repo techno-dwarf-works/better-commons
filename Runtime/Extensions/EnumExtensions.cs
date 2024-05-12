@@ -5,20 +5,20 @@ namespace Better.Commons.Runtime.Extensions
 {
     public static class EnumExtensions
     {
-        public static int ToFlagInt(this Enum value)
+        public static int ToFlagInt(this Enum self)
         {
-            if (value == null)
+            if (self == null)
             {
-                DebugUtility.LogException<ArgumentNullException>(nameof(value));
+                DebugUtility.LogException<ArgumentNullException>(nameof(self));
                 return -1;
             }
 
-            if (Enum.GetUnderlyingType(value.GetType()) != typeof(ulong))
+            if (Enum.GetUnderlyingType(self.GetType()) != typeof(ulong))
             {
-                return (int)Convert.ToInt64(value);
+                return (int)Convert.ToInt64(self);
             }
 
-            return (int)Convert.ToUInt64(value);
+            return (int)Convert.ToUInt64(self);
         }
 
         public static bool IsFlagAll(this Enum self)
