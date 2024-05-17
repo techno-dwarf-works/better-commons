@@ -10,7 +10,9 @@ using Better.Commons.Runtime.Extensions;
 using Better.Internal.Core.Runtime;
 using UnityEditor;
 using UnityEditor.Callbacks;
+using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Better.Commons.EditorAddons.Drawers
 {
@@ -44,39 +46,24 @@ namespace Better.Commons.EditorAddons.Drawers
             }
         }
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {
             TryInitialize();
 
-            if (_rootDrawer == null)
+            VisualElement propertyField = new PropertyField(property);
+            if (_rootDrawer != null)
             {
-                EditorGUI.PropertyField(position, property, label, true);
-                return;
+                var container = new ElementsContainer(property);
+                var defaultElement = container.CreateElementFrom(propertyField);
+                defaultElement.AddTag(typeof(PropertyDrawer));
+                defaultElement.AddTag(property);
+
+                _rootDrawer.PopulateContainerInternal(container);
+
+                propertyField = container.Generate();
             }
 
-            if (_rootDrawer.PreDrawInternal(ref position, property, label))
-            {
-                _rootDrawer.DrawFieldInternal(position, property, label);
-            }
-
-            _rootDrawer.PostDrawInternal(position, property, label);
-        }
-
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
-            TryInitialize();
-            if (_rootDrawer == null)
-            {
-                return EditorGUI.GetPropertyHeight(property, label, true);
-            }
-
-            var height = _rootDrawer.GetPropertyHeightInternal(property, label);
-            if (height.IsValid)
-            {
-                return height.Value + EditorGUI.GetPropertyHeight(property, label, true);
-            }
-
-            return height.Value;
+            return propertyField;
         }
 
         private IOrderedEnumerable<MultiPropertyAttribute> GetAttributes(FieldInfo field)

@@ -43,59 +43,17 @@ namespace Better.Commons.EditorAddons.Drawers.Base
         }
 
         protected abstract void Deconstruct();
-
-        protected virtual void DrawField(Rect position, SerializedProperty property, GUIContent label)
-        {
-            var buffer = PreparePropertyRect(position);
-            EditorGUI.PropertyField(buffer, property, label, true);
-        }
-
-        internal void DrawFieldInternal(Rect position, SerializedProperty property, GUIContent label)
+        
+        internal void PopulateContainerInternal(ElementsContainer elementsContainer)
         {
             if (_nextDrawer != null)
             {
-                _nextDrawer.DrawFieldInternal(position, property, label);
-                return;
+                _nextDrawer.PopulateContainerInternal(elementsContainer);
             }
 
-            DrawField(position, property, label);
+            PopulateContainer(elementsContainer);
         }
 
-        internal bool PreDrawInternal(ref Rect position, SerializedProperty property, GUIContent label)
-        {
-            if (_nextDrawer != null)
-            {
-                return PreDraw(ref position, property, label) && _nextDrawer.PreDrawInternal(ref position, property, label);
-            }
-
-            return PreDraw(ref position, property, label);
-        }
-
-        internal void PostDrawInternal(Rect position, SerializedProperty property, GUIContent label)
-        {
-            _nextDrawer?.PostDrawInternal(position, property, label);
-            PostDraw(position, property, label);
-        }
-
-        internal HeightCacheValue GetPropertyHeightInternal(SerializedProperty property, GUIContent label)
-        {
-            var propertyHeight = GetPropertyHeight(property, label);
-            if (_nextDrawer != null)
-            {
-                var heightInternal = _nextDrawer.GetPropertyHeightInternal(property, label);
-                return propertyHeight + heightInternal;
-            }
-
-            return propertyHeight;
-        }
-
-        protected abstract bool PreDraw(ref Rect position, SerializedProperty property, GUIContent label);
-        protected abstract Rect PreparePropertyRect(Rect original);
-        protected abstract void PostDraw(Rect position, SerializedProperty property, GUIContent label);
-
-        protected virtual HeightCacheValue GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
-            return HeightCacheValue.GetFull(EditorGUI.GetPropertyHeight(property, label, true));
-        }
+        protected abstract void PopulateContainer(ElementsContainer container);
     }
 }

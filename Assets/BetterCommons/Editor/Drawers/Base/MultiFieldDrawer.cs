@@ -9,13 +9,13 @@ using UnityEditor;
 
 namespace Better.Commons.EditorAddons.Drawers.Base
 {
-    public abstract class MultiFieldDrawer<T> : FieldDrawer where T : UtilityWrapper
+    public abstract class MultiFieldDrawer<T> : FieldDrawer where T : SerializedPropertyHandler
     {
         private static readonly CacheValue CacheValueField = new CacheValue();
 
-        protected WrapperCollection<T> _wrappers;
+        protected HandlerCollection<T> _handlers;
 
-        protected class CacheValue : CacheValue<WrapperCollectionValue<T>>
+        protected class CacheValue : CacheValue<CollectionValue<T>>
         {
         }
 
@@ -24,20 +24,20 @@ namespace Better.Commons.EditorAddons.Drawers.Base
         }
 
         /// <summary>
-        /// Method generates explicit typed collection inherited from <see cref="WrapperCollection{T}"/> 
+        /// Method generates explicit typed collection inherited from <see cref="HandlerCollection{T}"/> 
         /// </summary>
         /// <returns></returns>
-        protected abstract WrapperCollection<T> GenerateCollection();
+        protected abstract HandlerCollection<T> GenerateCollection();
 
         public override void Initialize(FieldDrawer drawer)
         {
             base.Initialize(drawer);
-            _wrappers = GenerateCollection();
+            _handlers = GenerateCollection();
         }
 
         protected override void Deconstruct()
         {
-            _wrappers.Deconstruct();
+            _handlers.Deconstruct();
         }
 
         protected virtual Type GetFieldOrElementType()
@@ -50,16 +50,16 @@ namespace Better.Commons.EditorAddons.Drawers.Base
         }
 
         /// <summary>
-        /// Validates if <see cref="_wrappers"/> contains property by <see cref="SerializedPropertyComparer"/>
+        /// Validates if <see cref="_handlers"/> contains property by <see cref="SerializedPropertyComparer"/>
         /// </summary>
-        /// <param name="property">SerializedProperty what will be stored into <see cref="_wrappers"/></param>
-        /// <param name="handler"><see cref="BaseUtility{THandler}"/> used to validate current stored wrappers and gets instance for recently added property</param>
+        /// <param name="property">SerializedProperty what will be stored into <see cref="_handlers"/></param>
+        /// <param name="handler"><see cref="SerializedPropertyUtility{THandler}"/> used to validate current stored wrappers and gets instance for recently added property</param>
         /// <typeparam name="THandler"></typeparam>
-        /// <returns>Returns true if wrapper for <paramref name="property"/> was already stored into <see cref="_wrappers"/></returns>
-        protected CacheValue ValidateCachedProperties<THandler>(SerializedProperty property, BaseUtility<THandler> handler)
+        /// <returns>Returns true if wrapper for <paramref name="property"/> was already stored into <see cref="_handlers"/></returns>
+        protected CacheValue ValidateCachedProperties<THandler>(SerializedProperty property, SerializedPropertyUtility<THandler> handler)
             where THandler : new()
         {
-            ValidateCachedPropertiesUtility.Validate(_wrappers, CacheValueField, property, GetFieldOrElementType(), _attribute.GetType(), handler);
+            ValidateCachedPropertiesUtility.Validate(_handlers, CacheValueField, property, GetFieldOrElementType(), _attribute.GetType(), handler);
             return CacheValueField;
         }
     }
