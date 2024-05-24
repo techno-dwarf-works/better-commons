@@ -107,11 +107,7 @@ namespace Better.Commons.EditorAddons.CustomEditors
 
             if (!_overrideDefault)
             {
-                var element = base.CreateInspectorGUI();
-                if (element != null)
-                {
-                    container.Add(element);
-                }
+                InspectorElement.FillDefaultInspector(container, serializedObject, this);
             }
 
             for (var i = 0; i < _postEditors.Count; i++)
@@ -122,8 +118,8 @@ namespace Better.Commons.EditorAddons.CustomEditors
                     container.Add(element);
                 }
             }
-            container.TrackSerializedObjectValue(serializedObject, OnSerializedObjectTrack);
 
+            container.TrackSerializedObjectValue(serializedObject, OnSerializedObjectTrack);
             return container;
         }
 

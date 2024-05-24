@@ -10,50 +10,19 @@ namespace Better.Commons.EditorAddons.Drawers.Base
     {
         protected readonly FieldInfo _fieldInfo;
         protected readonly MultiPropertyAttribute _attribute;
-        protected FieldDrawer _nextDrawer;
 
         protected FieldDrawer(FieldInfo fieldInfo, MultiPropertyAttribute attribute)
         {
-            Selection.selectionChanged += OnSelectionChanged;
             _fieldInfo = fieldInfo;
             _attribute = attribute;
         }
 
-        ~FieldDrawer()
+        public virtual void Initialize()
         {
-            EditorApplication.update += DeconstructOnMainThread;
         }
 
-        public virtual void Initialize(FieldDrawer drawer)
-        {
-            _nextDrawer = drawer;
-        }
+        protected internal abstract void Deconstruct();
 
-        private void DeconstructOnMainThread()
-        {
-            EditorApplication.update -= DeconstructOnMainThread;
-            Selection.selectionChanged -= OnSelectionChanged;
-            Deconstruct();
-        }
-
-        private void OnSelectionChanged()
-        {
-            Selection.selectionChanged -= OnSelectionChanged;
-            Deconstruct();
-        }
-
-        protected abstract void Deconstruct();
-        
-        internal void PopulateContainerInternal(ElementsContainer elementsContainer)
-        {
-            if (_nextDrawer != null)
-            {
-                _nextDrawer.PopulateContainerInternal(elementsContainer);
-            }
-
-            PopulateContainer(elementsContainer);
-        }
-
-        protected abstract void PopulateContainer(ElementsContainer container);
+        protected internal abstract void PopulateContainer(ElementsContainer container);
     }
 }

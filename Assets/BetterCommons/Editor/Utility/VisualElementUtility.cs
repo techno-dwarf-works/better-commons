@@ -1,6 +1,7 @@
 ﻿using System;
 using Better.Commons.EditorAddons.Enums;
 using Better.Commons.EditorAddons.Extensions;
+using Better.Commons.Runtime.Extensions;
 using Better.Commons.Runtime.Utility;
 using UnityEditor;
 using UnityEngine;
@@ -89,7 +90,7 @@ namespace Better.Commons.EditorAddons.Utility
                 DebugUtility.LogException<ArgumentNullException>(nameof(message));
                 return EmptyHelpBox;
             }
-            
+
             return new HelpBox(message, type);
         }
 
@@ -163,50 +164,31 @@ namespace Better.Commons.EditorAddons.Utility
             return clickEvent.button == mouseButton;
         }
 
-        public static void AddClickedEvent(VisualElement element, SerializedProperty property, EventCallback<ClickEvent, SerializedProperty> action)
-        {
-            element.RegisterCallback(action, property);
-        }
-
-        public static void AddIconClickedEvent(VisualElement element, SerializedProperty property, EventCallback<ClickEvent, SerializedProperty> action)
-        {
-            var image = element.Q<Image>();
-            image.RegisterCallback(action, property);
-        }
-
-        public static void AddClickableIcon(VisualElement element, IconType iconType, SerializedProperty property,
-            EventCallback<ClickEvent, (SerializedProperty, Image)> action)
-        {
-            var image = AddIcon(element, iconType);
-            image.RegisterCallback(action, (property, image));
-        }
-
-        public static Image AddIcon(VisualElement element, IconType iconType)
-        {
-            var icon = iconType.GetIcon();
-            var image = new Image
-            {
-                image = icon
-            };
-            element.Insert(0, image);
-            return image;
-        }
-
-        
-
         public static VisualElement CreateHorizontalGroup()
         {
             var element = new VisualElement();
             element.style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Row);
             return element;
         }
-        
+
         public static VisualElement CreateVerticalGroup()
         {
             var element = new VisualElement();
             element.style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Column);
             return element;
         }
-        
+
+        public static Image CreateLabelIcon(IconType iconType)
+        {
+            var icon = iconType.GetIcon();
+            var image = new Image
+            {
+                image = icon
+            };
+            
+            image.style.Height(StyleDefinition.SingleLineHeight).Width(StyleDefinition.SingleLineHeight).AlignSelf(new StyleEnum<Align>(Align.Center));
+
+            return image;
+        }
     }
 }

@@ -9,9 +9,9 @@ namespace Better.Commons.EditorAddons.Drawers.Caching
     public static class ValidateCachedPropertiesUtility
     {
         public static void Validate<TCache, TWrapper, THandler>(HandlerCollection<TWrapper> handlers, TCache cache, SerializedProperty property, Type fieldType,
-            Type attributeType, SerializedPropertyUtility<THandler> handler) where TCache : CacheValue<CollectionValue<TWrapper>>
+            Type attributeType, HandlerMap<THandler> handler) where TCache : CacheValue<CollectionValue<TWrapper>>
             where TWrapper : SerializedPropertyHandler
-            where THandler : new()
+            where THandler :HandlerMap<THandler>, new()
         {
             if (cache == null)
             {
@@ -61,7 +61,7 @@ namespace Better.Commons.EditorAddons.Drawers.Caching
                 return;
             }
 
-            var wrapper = handler.GetUtilityWrapper<TWrapper>(fieldType, attributeType);
+            var wrapper = handler.GetHandler<TWrapper>(fieldType, attributeType);
             if (wrapper == null)
             {
                 cache.Set(false, null);

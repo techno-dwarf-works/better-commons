@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Better.Commons.EditorAddons.Utility;
 using Better.Commons.Runtime.Utility;
 using UnityEngine.UIElements;
 
@@ -19,6 +20,8 @@ namespace Better.Commons.EditorAddons.Drawers
         {
             Elements = new List<VisualElement>();
             _root = new VisualElement();
+            var classStyle = StyleDefinition.AddSubState(StyleDefinition.BetterPropertyClass, nameof(FieldVisualElement));
+            _root.AddToClassList(classStyle);
             _tags = new HashSet<object>();
         }
 

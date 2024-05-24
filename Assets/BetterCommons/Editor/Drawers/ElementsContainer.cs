@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Better.Commons.EditorAddons.Utility;
+using Better.Commons.Runtime.Utility;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
 namespace Better.Commons.EditorAddons.Drawers
@@ -8,17 +12,21 @@ namespace Better.Commons.EditorAddons.Drawers
     public class ElementsContainer
     {
         public SerializedProperty Property { get; }
-        private SortedSet<FieldVisualElement> _elements;
+        public SerializedObject Object => Property.serializedObject;
+        private List<FieldVisualElement> _elements;
         private VisualElement _container;
-        private IStyle _style;
 
         public IStyle ContainerStyle => _container.style;
+        public event Action<ElementsContainer> OnSerializedObjectChanged;
 
         public ElementsContainer(SerializedProperty property)
         {
             Property = property;
-            _elements = new SortedSet<FieldVisualElement>();
+            _elements = new List<FieldVisualElement>();
             _container = new VisualElement();
+            var classStyle = StyleDefinition.AddSubState(StyleDefinition.BetterPropertyClass, nameof(ElementsContainer));
+            _container.AddToClassList(classStyle);
+            _container.TrackSerializedObjectValue(Object, Callback);
         }
 
         public FieldVisualElement CreateElementFrom(VisualElement element)
@@ -28,6 +36,11 @@ namespace Better.Commons.EditorAddons.Drawers
             return item;
         }
 
+        public void SetEnabled(bool value)
+        {
+            _container.SetEnabled(value);
+        }
+
         public FieldVisualElement CreateElement()
         {
             var item = new FieldVisualElement();
@@ -35,15 +48,16 @@ namespace Better.Commons.EditorAddons.Drawers
             return item;
         }
 
-        public void RemoveByTag(object tag)
+        public FieldVisualElement GetByTag(object tag)
         {
-            _elements.RemoveWhere(x => x.ContainsTag(tag));
+            if (TryGetByTag(tag, out var fieldVisualElement))
+            {
+                return fieldVisualElement;
+            }
+
+            throw new KeyNotFoundException($"Element with tag: {tag} not found");
         }
 
-        public IEnumerable<FieldVisualElement> GetByTag(object tag)
-        {
-            return _elements.Where(x => x.ContainsTag(tag));
-        }
         public IEnumerable<FieldVisualElement> GetByTags(IEnumerable<object> tag)
         {
             return _elements.Where(x => x.ContainsAnyTags(tag));
@@ -74,6 +88,11 @@ namespace Better.Commons.EditorAddons.Drawers
             }
 
             return _container;
+        }
+
+        private void Callback(SerializedObject obj)
+        {
+            OnSerializedObjectChanged?.Invoke(this);
         }
     }
 }

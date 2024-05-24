@@ -11,7 +11,7 @@ namespace Better.Commons.Runtime.Extensions
             var displayStyle = visible ? StyleKeyword.Auto : StyleKeyword.None;
             return self.Visibility(visibility).Display(displayStyle);
         }
-        
+
         public static IStyle AlignContent(this IStyle self, StyleEnum<Align> alignContent)
         {
             self.alignContent = alignContent;
@@ -177,6 +177,12 @@ namespace Better.Commons.Runtime.Extensions
         public static IStyle Height(this IStyle self, StyleLength height)
         {
             self.height = height;
+            return self;
+        }
+
+        public static IStyle Width(this IStyle self, StyleLength height)
+        {
+            self.width = height;
             return self;
         }
 
