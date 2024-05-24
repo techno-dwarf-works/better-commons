@@ -8,10 +8,10 @@ namespace Better.Commons.EditorAddons.Drawers.Caching
 {
     public static class ValidateCachedPropertiesUtility
     {
-        public static void Validate<TCache, TWrapper, THandler>(WrapperCollection<TWrapper> wrappers, TCache cache, SerializedProperty property, Type fieldType,
-            Type attributeType, BaseUtility<THandler> handler) where TCache : CacheValue<WrapperCollectionValue<TWrapper>>
-            where TWrapper : UtilityWrapper
-            where THandler : new()
+        public static void Validate<TCache, TWrapper, THandler>(HandlerCollection<TWrapper> handlers, TCache cache, SerializedProperty property, Type fieldType,
+            Type attributeType, HandlerMap<THandler> handler) where TCache : CacheValue<CollectionValue<TWrapper>>
+            where TWrapper : SerializedPropertyHandler
+            where THandler :HandlerMap<THandler>, new()
         {
             if (cache == null)
             {
@@ -19,9 +19,9 @@ namespace Better.Commons.EditorAddons.Drawers.Caching
                 return;
             }
             
-            if (wrappers == null)
+            if (handlers == null)
             {
-                DebugUtility.LogException<ArgumentNullException>(nameof(wrappers));
+                DebugUtility.LogException<ArgumentNullException>(nameof(handlers));
                 cache.Set(false, null);
                 return;
             }
@@ -54,22 +54,22 @@ namespace Better.Commons.EditorAddons.Drawers.Caching
                 return;
             }
 
-            if (wrappers.TryGetValue(property, out var wrapperCollectionValue))
+            if (handlers.TryGetValue(property, out var wrapperCollectionValue))
             {
-                handler.ValidateCachedProperties(wrappers);
+                handler.ValidateCachedProperties(handlers);
                 cache.Set(true, wrapperCollectionValue);
                 return;
             }
 
-            var wrapper = handler.GetUtilityWrapper<TWrapper>(fieldType, attributeType);
+            var wrapper = handler.GetHandler<TWrapper>(fieldType, attributeType);
             if (wrapper == null)
             {
                 cache.Set(false, null);
                 return;
             }
 
-            var collectionValue = new WrapperCollectionValue<TWrapper>(wrapper, fieldType);
-            wrappers.Add(property, collectionValue);
+            var collectionValue = new CollectionValue<TWrapper>(wrapper, fieldType);
+            handlers.Add(property, collectionValue);
             cache.Set(false, collectionValue);
         }
     }
