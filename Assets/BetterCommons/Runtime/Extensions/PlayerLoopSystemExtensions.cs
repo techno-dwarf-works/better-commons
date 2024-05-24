@@ -204,8 +204,8 @@ namespace Better.Commons.Runtime.Extensions
                 result = true;
             }
 #else
-                    loopSystem.updateDelegate -= updateFunction;
-                    result = true;
+            self.updateDelegate -= updateFunction;
+            result = true;
 #endif
 
             var subSystems = self.subSystemList;
@@ -236,8 +236,8 @@ namespace Better.Commons.Runtime.Extensions
                     result = true;
                 }
 #else
-                    loopSystem.updateDelegate -= updateFunction;
-                    result = true;
+                self.updateDelegate -= updateFunction;
+                result = true;
 #endif
             }
 
