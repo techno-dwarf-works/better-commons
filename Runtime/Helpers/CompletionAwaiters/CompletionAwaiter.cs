@@ -31,7 +31,7 @@ namespace Better.Commons.Runtime.Helpers.CompletionAwaiters
 
         protected void SetResult(TValue value)
         {
-            if (!_completionSource.TrySetResult(value))
+            if (_completionSource.TrySetResult(value))
             {
                 OnCompleted(value);
             }
