@@ -10,32 +10,21 @@ using Better.Commons.Runtime.Extensions;
 using Better.Internal.Core.Runtime;
 using UnityEditor;
 using UnityEditor.Callbacks;
-using UnityEditor.UIElements;
-using UnityEngine.UIElements;
+using UnityEngine;
 
 namespace Better.Commons.EditorAddons.Drawers
 {
-    // [CustomPropertyDrawer(typeof(MultiPropertyAttribute), true)]
+    [CustomPropertyDrawer(typeof(MultiPropertyAttribute), true)]
     public sealed class MultiPropertyDrawer : PropertyDrawer
     {
         private static Dictionary<Type, Type> _fieldDrawers = new Dictionary<Type, Type>(AssignableFromComparer.Instance);
-
-        private static Dictionary<MultiPropertyDrawer, string> _propertyDrawers =
-            new Dictionary<MultiPropertyDrawer, string>();
-
         private bool _initialized;
-        private List<FieldDrawer> _drawers;
-
-        public MultiPropertyDrawer()
-        {
-            _drawers = new List<FieldDrawer>();
-        }
+        private FieldDrawer _rootDrawer;
 
         [InitializeOnLoadMethod]
         [DidReloadScripts]
         private static void OnInitialize()
         {
-            _propertyDrawers.Clear();
             var types = typeof(FieldDrawer).GetAllInheritedTypesWithoutUnityObject();
             foreach (var type in types)
             {
@@ -43,75 +32,51 @@ namespace Better.Commons.EditorAddons.Drawers
                 foreach (var att in atts)
                 {
                     if (att == null) continue;
-                    if (!_fieldDrawers.TryAdd(att.ForAttribute, type))
+                    if (!_fieldDrawers.ContainsKey(att.ForAttribute))
                     {
-                        if (att.Override)
-                        {
-                            _fieldDrawers[att.ForAttribute] = type;
-                        }
+                        _fieldDrawers.Add(att.ForAttribute, type);
+                    }
+                    else if (att.Override)
+                    {
+                        _fieldDrawers[att.ForAttribute] = type;
                     }
                 }
             }
         }
 
-        ~MultiPropertyDrawer()
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            EditorApplication.update += DeconstructOnMainThread;
-        }
-
-
-        private void DeconstructOnMainThread()
-        {
-            EditorApplication.update -= DeconstructOnMainThread;
-            Selection.selectionChanged -= OnSelectionChanged;
-            Deconstruct();
-        }
-
-        private void OnSelectionChanged()
-        {
-            Selection.selectionChanged -= OnSelectionChanged;
-            Deconstruct();
-        }
-
-        private void Deconstruct()
-        {
-            _propertyDrawers.Remove(this);
-            foreach (var fieldDrawer in _drawers)
-            {
-                fieldDrawer.Deconstruct();
-            }
-        }
-
-        public override VisualElement CreatePropertyGUI(SerializedProperty property)
-        {
-            Selection.selectionChanged += OnSelectionChanged;
-            if (_propertyDrawers.ContainsValue(property.propertyPath))
-            {
-                var visualElement = new VisualElement();
-                visualElement.visible = false;
-                return visualElement;
-            }
-
             TryInitialize();
-            _propertyDrawers.Add(this, property.propertyPath);
-            VisualElement propertyField = new PropertyField(property);
-            if (_drawers.Count > 0)
+
+            if (_rootDrawer == null)
             {
-                var container = new ElementsContainer(property);
-                var defaultElement = container.CreateElementFrom(propertyField);
-                propertyField.style.FlexGrow(new StyleFloat(1));
-                defaultElement.AddTag(typeof(PropertyDrawer));
-                defaultElement.AddTag(property);
-
-                foreach (var fieldDrawer in _drawers)
-                {
-                    fieldDrawer.PopulateContainer(container);
-                }
-
-                propertyField = container.Generate();
+                EditorGUI.PropertyField(position, property, label, true);
+                return;
             }
 
-            return propertyField;
+            if (_rootDrawer.PreDrawInternal(ref position, property, label))
+            {
+                _rootDrawer.DrawFieldInternal(position, property, label);
+            }
+
+            _rootDrawer.PostDrawInternal(position, property, label);
+        }
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            TryInitialize();
+            if (_rootDrawer == null)
+            {
+                return EditorGUI.GetPropertyHeight(property, label, true);
+            }
+
+            var height = _rootDrawer.GetPropertyHeightInternal(property, label);
+            if (height.IsValid)
+            {
+                return height.Value + EditorGUI.GetPropertyHeight(property, label, true);
+            }
+
+            return height.Value;
         }
 
         private IOrderedEnumerable<MultiPropertyAttribute> GetAttributes(FieldInfo field)
@@ -125,6 +90,7 @@ namespace Better.Commons.EditorAddons.Drawers
 
             _initialized = true;
             var attributes = GetAttributes(fieldInfo);
+            var drawers = new List<FieldDrawer>();
             var param = new object[] { fieldInfo, null };
             foreach (var propertyAttribute in attributes)
             {
@@ -132,8 +98,24 @@ namespace Better.Commons.EditorAddons.Drawers
 
                 param[1] = propertyAttribute;
                 var drawer = (FieldDrawer)Activator.CreateInstance(drawerType, Defines.ConstructorFlags, null, param, null);
-                drawer.Initialize();
-                _drawers.Add(drawer);
+                drawers.Add(drawer);
+            }
+
+            if (drawers.Count <= 0) return;
+
+            _rootDrawer = drawers[0];
+            if (drawers.Count < 2)
+            {
+                drawers[0].Initialize(null);
+            }
+            else
+            {
+                for (var index = 0; index < drawers.Count - 1; index++)
+                {
+                    drawers[index].Initialize(drawers[index + 1]);
+                }
+
+                drawers[drawers.Count - 1].Initialize(null);
             }
         }
     }

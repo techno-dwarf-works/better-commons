@@ -7,8 +7,6 @@ using Better.Commons.EditorAddons.CustomEditors.Base;
 using Better.Commons.EditorAddons.Extensions;
 using Better.Commons.Runtime.Extensions;
 using UnityEditor;
-using UnityEditor.UIElements;
-using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
 
 namespace Better.Commons.EditorAddons.CustomEditors
@@ -92,47 +90,35 @@ namespace Better.Commons.EditorAddons.CustomEditors
             }
         }
 
-        public override VisualElement CreateInspectorGUI()
+        public override void OnInspectorGUI()
         {
-            var container = new VisualElement();
-
-            for (var i = 0; i < _preEditors.Count; i++)
+            using (var change = new EditorGUI.ChangeCheckScope())
             {
-                var element = _preEditors[i].CreateInspectorGUI();
-                if (element != null)
+                for (var i = 0; i < _preEditors.Count; i++)
                 {
-                    container.Add(element);
+                    _preEditors[i].OnInspectorGUI();
                 }
-            }
 
-            if (!_overrideDefault)
-            {
-                InspectorElement.FillDefaultInspector(container, serializedObject, this);
-            }
-
-            for (var i = 0; i < _postEditors.Count; i++)
-            {
-                var element = _postEditors[i].CreateInspectorGUI();
-                if (element != null)
+                if (!_overrideDefault)
                 {
-                    container.Add(element);
+                    base.OnInspectorGUI();
                 }
-            }
 
-            container.TrackSerializedObjectValue(serializedObject, OnSerializedObjectTrack);
-            return container;
-        }
+                for (var i = 0; i < _postEditors.Count; i++)
+                {
+                    _postEditors[i].OnInspectorGUI();
+                }
 
-        private void OnSerializedObjectTrack(SerializedObject serializedObject)
-        {
-            for (var i = 0; i < _preEditors.Count; i++)
-            {
-                _preEditors[i].OnChanged(serializedObject);
-            }
+                if (!change.changed) return;
+                for (var i = 0; i < _preEditors.Count; i++)
+                {
+                    _preEditors[i].OnChanged();
+                }
 
-            for (var i = 0; i < _postEditors.Count; i++)
-            {
-                _postEditors[i].OnChanged(serializedObject);
+                for (var i = 0; i < _postEditors.Count; i++)
+                {
+                    _postEditors[i].OnChanged();
+                }
             }
         }
 

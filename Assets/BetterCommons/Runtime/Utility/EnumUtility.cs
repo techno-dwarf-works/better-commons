@@ -27,7 +27,7 @@ namespace Better.Commons.Runtime.Utility
             var values = Enum.GetValues(enumType);
             return values.ToEnumerable<Enum>();
         }
-
+        
         public static IEnumerable<TEnum> GetAllValues<TEnum>()
             where TEnum : Enum
         {
@@ -75,17 +75,12 @@ namespace Better.Commons.Runtime.Utility
         {
             if (a == null)
             {
-                throw new ArgumentNullException(nameof(a));
+                DebugUtility.LogException<ArgumentNullException>(nameof(a));
             }
 
             if (b == null)
             {
-                throw new ArgumentNullException(nameof(b));
-            }
-
-            if (a.GetType() != b.GetType())
-            {
-                throw new Exception($"Type of {a.ToString()} and {b.ToString()} is different");
+                DebugUtility.LogException<ArgumentNullException>(nameof(b));
             }
 
             return (Enum)Enum.ToObject(a.GetType(), a.ToFlagInt() | b.ToFlagInt());
@@ -95,35 +90,15 @@ namespace Better.Commons.Runtime.Utility
         {
             if (a == null)
             {
-                throw new ArgumentNullException(nameof(a));
+                DebugUtility.LogException<ArgumentNullException>(nameof(a));
             }
 
             if (b == null)
             {
-                throw new ArgumentNullException(nameof(b));
-            }
-            
-            if (a.GetType() != b.GetType())
-            {
-                throw new Exception($"Type of {a.ToString()} and {b.ToString()} is different");
+                DebugUtility.LogException<ArgumentNullException>(nameof(b));
             }
 
             return (Enum)Enum.ToObject(a.GetType(), a.ToFlagInt() & ~b.ToFlagInt());
-        }
-
-        public static Enum ToEnum(Type enumType, int value)
-        {
-            return (Enum)Enum.ToObject(enumType, value);
-        }
-
-        public static bool HasValue(Enum currentValue, Enum value, bool isFlag)
-        {
-            if (isFlag)
-            {
-                return currentValue.HasFlag(value);
-            }
-
-            return Equals(currentValue, value);
         }
     }
 }
