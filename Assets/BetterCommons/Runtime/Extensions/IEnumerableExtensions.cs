@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 
 namespace Better.Commons.Runtime.Extensions
 {
-    public static class EnumerableExtensions
+    public static class IEnumerableExtensions
     {
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> self)
         {
@@ -151,7 +151,7 @@ namespace Better.Commons.Runtime.Extensions
             var totalWeight = valuesArray.Sum(v => v.Item2);
             if (totalWeight <= 0)
             {
-                var message = $"[${nameof(EnumerableExtensions)}] {nameof(GetRandomWithWeights)}: Total weight is {totalWeight}, returned first item";
+                var message = $"[${nameof(IEnumerableExtensions)}] {nameof(GetRandomWithWeights)}: Total weight is {totalWeight}, returned first item";
                 Debug.LogWarning(message);
                 return valuesArray[0].Item1;
             }
