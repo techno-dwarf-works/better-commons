@@ -1,54 +1,83 @@
 ﻿using System;
 using System.Reflection;
-using Better.Commons.EditorAddons.Comparers;
+using Better.Commons.EditorAddons.Drawers.Base;
 using Better.Commons.EditorAddons.Drawers.Caching;
 using Better.Commons.EditorAddons.Drawers.Utility;
 using Better.Commons.Runtime.Drawers.Attributes;
 using Better.Commons.Runtime.Extensions;
 using UnityEditor;
+using UnityEditor.UIElements;
+using UnityEngine.UIElements;
 
-namespace Better.Commons.EditorAddons.Drawers.Base
+namespace Better.Commons.EditorAddons.Drawers
 {
-    public abstract class MultiFieldDrawer<T> : FieldDrawer where T : SerializedPropertyHandler
+    public abstract class BasePropertyDrawer<T> : PropertyDrawer where T : SerializedPropertyHandler
     {
+        protected FieldInfo _fieldInfo => fieldInfo;
+        protected MultiPropertyAttribute _attribute => (MultiPropertyAttribute)attribute;
         private static readonly CacheValue CacheValueField = new CacheValue();
-
+    
         protected HandlerCollection<T> _handlers;
-
+        
         protected class CacheValue : CacheValue<CollectionValue<T>>
         {
         }
-
-        protected MultiFieldDrawer(FieldInfo fieldInfo, MultiPropertyAttribute attribute) : base(fieldInfo, attribute)
+    
+        protected BasePropertyDrawer()
         {
+            Selection.selectionChanged += OnSelectionChanged;
         }
-
+    
+        ~BasePropertyDrawer()
+        {
+            EditorApplication.update += DeconstructOnMainThread;
+        }
+    
+        public override VisualElement CreatePropertyGUI(SerializedProperty property)
+        {
+            var container = new ElementsContainer(property);
+            var propertyField = new PropertyField(property);
+            propertyField.style.FlexGrow(new StyleFloat(1));
+            var defaultElement = container.CreateElementFrom(propertyField);
+            defaultElement.AddTag(typeof(PropertyDrawer));
+            defaultElement.AddTag(property);
+    
+            _handlers = GenerateCollection();
+            PopulateContainer(container);
+    
+            return container.Generate();
+        }
+        
         /// <summary>
         /// Method generates explicit typed collection inherited from <see cref="HandlerCollection{T}"/> 
         /// </summary>
         /// <returns></returns>
         protected abstract HandlerCollection<T> GenerateCollection();
-
-        public override void Initialize()
+    
+        protected abstract void PopulateContainer(ElementsContainer container);
+    
+        private void DeconstructOnMainThread()
         {
-            base.Initialize();
-            _handlers = GenerateCollection();
+            EditorApplication.update -= DeconstructOnMainThread;
+            Selection.selectionChanged -= OnSelectionChanged;
+            Deconstruct();
         }
-
-        protected internal override void Deconstruct()
+    
+        private void OnSelectionChanged()
         {
-            _handlers?.Deconstruct();
+            Selection.selectionChanged -= OnSelectionChanged;
+            Deconstruct();
         }
-
+        
         protected virtual Type GetFieldOrElementType()
         {
             var fieldType = _fieldInfo.FieldType;
             if (fieldType.IsArrayOrList())
                 return fieldType.GetCollectionElementType();
-
+    
             return fieldType;
         }
-
+        
         /// <summary>
         /// Validates if <see cref="_handlers"/> contains property by <see cref="SerializedPropertyComparer"/>
         /// </summary>
@@ -61,6 +90,11 @@ namespace Better.Commons.EditorAddons.Drawers.Base
         {
             ValidateCachedPropertiesUtility.Validate(_handlers, CacheValueField, property, GetFieldOrElementType(), _attribute.GetType(), handler);
             return CacheValueField;
+        }
+    
+        protected virtual void Deconstruct()
+        {
+            _handlers?.Deconstruct();
         }
     }
 }
