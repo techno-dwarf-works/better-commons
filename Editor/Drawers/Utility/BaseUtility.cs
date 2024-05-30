@@ -7,28 +7,27 @@ using UnityEditor;
 
 namespace Better.Commons.EditorAddons.Drawers.Utility
 {
-    //TODO: Maybe make Locator<Locator<Type>>
-    public abstract class HandlerMap<TMap> where TMap : HandlerMap<TMap>, new()
+    public abstract class BaseUtility<THandler> where THandler : new()
     {
-        private static TMap _instance;
+        private static THandler _instance;
 
         protected HashSet<Type> _availableTypes;
         protected BaseWrappersTypeCollection _wrappersCollection;
 
-        public static TMap Instance
+        public static THandler Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = new TMap();
+                    _instance = new THandler();
                 }
 
                 return _instance;
             }
         }
 
-        protected HandlerMap()
+        protected BaseUtility()
         {
             Construct();
         }
@@ -41,7 +40,7 @@ namespace Better.Commons.EditorAddons.Drawers.Utility
 
 
         /// <summary>
-        /// Type collection for <see cref="GetHandler{T}"/>.
+        /// Type collection for <see cref="GetUtilityWrapper"/>.
         /// <example> Example:
         /// <code>
         /// return new WrappersTypeCollection()
@@ -84,7 +83,7 @@ namespace Better.Commons.EditorAddons.Drawers.Utility
         /// <param name="attributeType"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T GetHandler<T>(Type fieldType, Type attributeType) where T : SerializedPropertyHandler
+        public T GetUtilityWrapper<T>(Type fieldType, Type attributeType) where T : UtilityWrapper
         {
             if (fieldType == null)
             {
@@ -129,15 +128,16 @@ namespace Better.Commons.EditorAddons.Drawers.Utility
         }
         
         /// <summary>
-        /// Validates stored properties if their <see cref="CollectionValue{T}.Type"/> supported
+        /// Validates stored properties if their <see cref="WrapperCollectionValue{T}.Type"/> supported
         /// </summary>
         /// <param name="handler"></param>
+        /// <param name="gizmoWrappers"></param>
         /// <typeparam name="T"></typeparam>
-        /// <typeparam name="TMap"></typeparam>
-        public void ValidateCachedProperties<T>(HandlerCollection<T> handler) where T : SerializedPropertyHandler
+        /// <typeparam name="THandler"></typeparam>
+        public void ValidateCachedProperties<T>(WrapperCollection<T> gizmoWrappers) where T : UtilityWrapper
         {
             List<SerializedProperty> keysToRemove = null;
-            foreach (var value in handler)
+            foreach (var value in gizmoWrappers)
             {
                 if (IsSupported(value.Value.Type)) continue;
                 if (keysToRemove == null)
@@ -151,7 +151,7 @@ namespace Better.Commons.EditorAddons.Drawers.Utility
             {
                 foreach (var serializedProperty in keysToRemove)
                 {
-                    handler.Remove(serializedProperty);
+                    gizmoWrappers.Remove(serializedProperty);
                 }
             }
         }

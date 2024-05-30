@@ -3,9 +3,9 @@ using Better.Commons.EditorAddons.Drawers.Utility;
 
 namespace Better.Commons.EditorAddons.Drawers.Base
 {
-    public class CollectionValue<T> where T : SerializedPropertyHandler
+    public class WrapperCollectionValue<T> where T : UtilityWrapper
     {
-        public CollectionValue(T wrapper, Type type)
+        public WrapperCollectionValue(T wrapper, Type type)
         {
             Wrapper = wrapper;
             Type = type;
