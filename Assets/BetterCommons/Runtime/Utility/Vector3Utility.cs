@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Better.Commons.Runtime.Enums;
+using Better.Commons.Runtime.Extensions;
 using Unity.Collections;
 using UnityEngine;
 
@@ -140,7 +142,7 @@ namespace Better.Commons.Runtime.Utility
                 Mathf.InverseLerp(a.z, b.z, value.z)
             );
         }
-        
+
         public static Vector3 Flat(Vector3 source)
         {
             source.y = default;
@@ -165,6 +167,16 @@ namespace Better.Commons.Runtime.Utility
             self.y = Mathf.Abs(self.y);
             self.z = Mathf.Abs(self.z);
             return self;
+        }
+
+        public static Vector3 ApplyAxes(Vector3 target, Vector3 source, IEnumerable<Vector3Axis> axes)
+        {
+            foreach (var axis in axes)
+            {
+                target[(int)axis] = source.GetAxis(axis);
+            }
+
+            return target;
         }
     }
 }
