@@ -1,4 +1,5 @@
-﻿using Better.Commons.Runtime.Utility;
+﻿using Better.Commons.Runtime.Enums;
+using Better.Commons.Runtime.Utility;
 using UnityEngine;
 
 namespace Better.Commons.Runtime.Extensions
@@ -28,6 +29,11 @@ namespace Better.Commons.Runtime.Extensions
         public static Vector2 Abs(this Vector2 self)
         {
             return Vector2Utility.Abs(self);
+        }
+
+        public static float GetAxis(this Vector2 self, Vector2Axis axis)
+        {
+            return self[(int)axis];
         }
     }
 }
