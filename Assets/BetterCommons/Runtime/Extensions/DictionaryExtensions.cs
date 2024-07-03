@@ -89,6 +89,23 @@ namespace Better.Commons.Runtime.Extensions
             return self.TryGetKeys(value, out keys) && self.Remove(keys);
         }
 
+        public static TValue GetOrCreate<TKey, TValue>(this Dictionary<TKey, TValue> self, TKey key) 
+            where TValue : new()
+        {
+            if (self == null)
+            {
+                throw new ArgumentNullException(nameof(self));
+            }
+
+            if (!self.TryGetValue(key, out var value))
+            {
+                value = new TValue();
+                self.Add(key, value);
+            }
+
+            return value;
+        }
+
         public static bool RemoveAll<TKey, TValue>(this Dictionary<TKey, TValue> self, TValue value)
         {
             return self.RemoveAll(value, out _);

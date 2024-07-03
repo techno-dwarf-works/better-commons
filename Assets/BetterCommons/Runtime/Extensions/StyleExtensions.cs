@@ -65,6 +65,15 @@ namespace Better.Commons.Runtime.Extensions
             self.borderBottomWidth = borderBottomWidth;
             return self;
         }
+        
+        public static IStyle BorderWidth(this IStyle self, StyleFloat width)
+        {
+            self.borderTopWidth = width;
+            self.borderRightWidth = width;
+            self.borderBottomWidth = width;
+            self.borderLeftWidth = width;
+            return self;
+        }
 
         public static IStyle BorderLeftColor(this IStyle self, StyleColor borderLeftColor)
         {

@@ -1,13 +1,12 @@
 ﻿using System;
-using Better.Commons.EditorAddons.Drawers;
+using Better.Commons.EditorAddons.Drawers.Container;
 using Better.Commons.EditorAddons.Enums;
-using Better.Commons.EditorAddons.Extensions;
+using Better.Commons.EditorAddons.Utility;
 using Better.Commons.Runtime.Extensions;
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
-namespace Better.Commons.EditorAddons.Utility
+namespace Better.Commons.EditorAddons.Extensions
 {
     public static class ElementsContainerExtensions
     {
@@ -21,38 +20,20 @@ namespace Better.Commons.EditorAddons.Utility
 
         public static Image AddIcon(this ElementsContainer self, IconType iconType)
         {
-            var icon = iconType.GetIcon();
             var image = VisualElementUtility.CreateLabelIcon(iconType);
-            
-            var element = self.GetByTag(self.Property);
-            element.RootStyle.FlexDirection(new StyleEnum<FlexDirection>(FlexDirection.Row));
-            element.Elements.Insert(0, image);
+
+            var element = self.CoreElement;
+            element.style.FlexDirection(new StyleEnum<FlexDirection>(FlexDirection.Row));
+            element.Insert(0, image);
             return image;
-        }
-
-        public static bool TryGetPropertyField(this ElementsContainer self, out PropertyField propertyField)
-        {
-            if (!self.TryGetByTag(self.Property, out var propertyElement))
-            {
-                propertyField = null;
-                return false;
-            }
-
-            if (!propertyElement.Elements.TryFind(out propertyField))
-            {
-                propertyField = null;
-                return false;
-            }
-
-            return true;
         }
 
         public static void AddNotSupportedBox(this ElementsContainer self, Type fieldType, Type attributeType)
         {
-            var helpBox = VisualElementUtility.NotSupportedBox(self.Property, fieldType, attributeType);
+            var helpBox = VisualElementUtility.NotSupportedBox(self.SerializedProperty, fieldType, attributeType);
             if (self.TryGetByTag(VisualElementUtility.NotSupportedTag, out var element))
             {
-                element.Elements.Add(helpBox);
+                element.Add(helpBox);
             }
             else
             {
@@ -61,7 +42,7 @@ namespace Better.Commons.EditorAddons.Utility
             }
         }
 
-        public static FieldVisualElement GetOrAddHelpBox(this ElementsContainer self, string message, object tag, HelpBoxMessageType messageType)
+        public static SubPrewarmElement GetOrAddHelpBox(this ElementsContainer self, string message, object tag, HelpBoxMessageType messageType)
         {
             if (!self.TryGetByTag(tag, out var element))
             {

@@ -1,5 +1,4 @@
 ﻿using Better.Commons.EditorAddons.Enums;
-using Better.Commons.EditorAddons.Utility;
 using UnityEngine;
 
 namespace Better.Commons.EditorAddons.Extensions

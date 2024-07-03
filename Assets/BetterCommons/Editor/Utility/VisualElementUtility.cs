@@ -4,36 +4,26 @@ using Better.Commons.EditorAddons.Extensions;
 using Better.Commons.Runtime.Extensions;
 using Better.Commons.Runtime.Utility;
 using UnityEditor;
-using UnityEngine;
+using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
 namespace Better.Commons.EditorAddons.Utility
 {
     public static class VisualElementUtility
     {
-        private static float _spaceHeight = 6f;
-        public static float SpaceHeight => _spaceHeight;
-
-        public const int MouseButtonLeft = 0;
-        public const int MouseButtonRight = 1;
-        public const int MouseButtonMiddle = 2;
+        private const int MouseButtonLeft = 0;
+        private const int MouseButtonRight = 1;
+        private const int MouseButtonMiddle = 2;
 
         private static readonly HelpBox EmptyHelpBox = new HelpBox();
 
         public const string NotSupportedTag = nameof(NotSupportedTag);
 
-        public static string NotSupportedMessage(string fieldName, Type fieldType, Type attributeType)
+        private static string NotSupportedMessage(string fieldName, Type fieldType, Type attributeType)
         {
-            return
-                $"Field {FormatBold(fieldName)} of type {FormatBold(fieldType.Name)} not supported for {FormatBold(attributeType.Name)}";
+            return $"Field {fieldName.FormatBold()} of type {fieldType.Name.FormatBold()} not supported for {attributeType.Name.FormatBold()}";
         }
 
-        /// <summary>
-        /// Not supported Inspector HelpBox with RTF text
-        /// </summary>
-        /// <param name="fieldType"></param>
-        /// <param name="attributeType"></param>
-        /// <param name="property"></param>
         public static HelpBox NotSupportedBox(SerializedProperty property, Type fieldType, Type attributeType)
         {
             if (property == null)
@@ -58,31 +48,6 @@ namespace Better.Commons.EditorAddons.Utility
             return HelpBox(message, HelpBoxMessageType.Error);
         }
 
-        public static string FormatBold(string text)
-        {
-            return $"<b>{text}</b>";
-        }
-
-        public static string FormatItalic(string text)
-        {
-            return $"<i>{text}</i>";
-        }
-
-        public static string FormatBoldItalic(string text)
-        {
-            return $"<b><i>{text}</i></b>";
-        }
-
-        public static string BeautifyFormat(string text)
-        {
-            return $"\"<b><i>{text}</i></b>\"";
-        }
-
-        /// <summary>
-        /// Override for default Inspector HelpBox with style
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="type"></param>
         public static HelpBox HelpBox(string message, HelpBoxMessageType type)
         {
             if (message == null)
@@ -93,11 +58,7 @@ namespace Better.Commons.EditorAddons.Utility
 
             return new HelpBox(message, type);
         }
-
-        /// <summary>
-        /// Override for default Inspector HelpBox with style
-        /// </summary>
-        /// <param name="message"></param>
+        
         public static HelpBox HelpBox(string message)
         {
             if (message == null)
@@ -107,41 +68,6 @@ namespace Better.Commons.EditorAddons.Utility
             }
 
             return HelpBox(message, HelpBoxMessageType.None);
-        }
-
-        public static int SelectionGrid(int selected, string[] texts, int xCount, GUIStyle style,
-            params GUILayoutOption[] options)
-        {
-            var bufferSelected = selected;
-            GUILayout.BeginVertical();
-            var count = 0;
-            var isHorizontal = false;
-
-            for (var index = 0; index < texts.Length; index++)
-            {
-                var text = texts[index];
-
-                if (count == 0)
-                {
-                    GUILayout.BeginHorizontal();
-                    isHorizontal = true;
-                }
-
-                count++;
-                if (GUILayout.Toggle(bufferSelected == index, text, new GUIStyle(style), options))
-                    bufferSelected = index;
-
-                if (count == xCount)
-                {
-                    GUILayout.EndHorizontal();
-                    count = 0;
-                    isHorizontal = false;
-                }
-            }
-
-            if (isHorizontal) GUILayout.EndHorizontal();
-            GUILayout.EndVertical();
-            return bufferSelected;
         }
 
         public static bool IsLeftButton(ClickEvent clickEvent)
@@ -162,6 +88,24 @@ namespace Better.Commons.EditorAddons.Utility
         public static bool IsMouseButton(ClickEvent clickEvent, int mouseButton)
         {
             return clickEvent.button == mouseButton;
+        }
+
+        public static Label CreateLabel(string text)
+        {
+            var label = new Label(text);
+            label.AddToClassList(PropertyField.labelUssClassName);
+            label.style
+                .MarginBottom(StyleDefinition.OneStyleLength)
+                .MarginTop(StyleDefinition.OneStyleLength)
+                .MarginLeft(new StyleLength(3f));
+            return label;
+        }
+        
+        public static Label CreateLabelFor(SerializedProperty serializedProperty)
+        {
+            var label = CreateLabel(serializedProperty.displayName);
+            label.style.FlexGrow(StyleDefinition.OneStyleFloat);
+            return label;
         }
 
         public static VisualElement CreateHorizontalGroup()
@@ -185,7 +129,7 @@ namespace Better.Commons.EditorAddons.Utility
             {
                 image = icon
             };
-            
+
             image.style.Height(StyleDefinition.SingleLineHeight).Width(StyleDefinition.SingleLineHeight).AlignSelf(new StyleEnum<Align>(Align.Center));
 
             return image;

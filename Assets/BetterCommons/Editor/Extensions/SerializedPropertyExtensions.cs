@@ -243,7 +243,7 @@ namespace Better.Commons.EditorAddons.Extensions
             }
             catch
             {
-                return true;
+                return false;
             }
 
             return true;
