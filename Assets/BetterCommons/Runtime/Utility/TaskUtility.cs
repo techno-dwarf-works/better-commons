@@ -8,6 +8,11 @@ namespace Better.Commons.Runtime.Utility
     {
         public static Task WaitForSeconds(float seconds, CancellationToken cancellationToken = default)
         {
+            if (seconds <= 0 || cancellationToken.IsCancellationRequested)
+            {
+                return Task.CompletedTask;
+            }
+            
             var millisecondsDelay = TimeUtility.SecondsToMilliseconds(seconds);
             return Task.Delay(millisecondsDelay, cancellationToken);
         }
@@ -42,10 +47,8 @@ namespace Better.Commons.Runtime.Utility
 
         public static async Task WaitFrame(int count, CancellationToken cancellationToken = default)
         {
-            if (count < 1)
+            if (count <= 0 || cancellationToken.IsCancellationRequested)
             {
-                var message = $"{nameof(count)} cannot be less 1";
-                DebugUtility.LogException<ArgumentOutOfRangeException>(message);
                 return;
             }
 
