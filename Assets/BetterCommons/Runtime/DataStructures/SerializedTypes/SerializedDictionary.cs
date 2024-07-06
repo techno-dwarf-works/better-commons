@@ -10,8 +10,9 @@ namespace Better.Commons.Runtime.DataStructures.SerializedTypes
     [Serializable]
     public class SerializedDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver
     {
-        [SerializeField, HideInInspector] private TKey[] _keys;
-        [SerializeField, HideInInspector] private TValue[] _values;
+        // TODO: Add CustomDrawer for key-item table
+        [SerializeField] private TKey[] _keys;
+        [SerializeField] private TValue[] _values;
 
         public SerializedDictionary()
         {
