@@ -16,7 +16,7 @@ namespace Better.Commons.Runtime.DataStructures.SerializedTypes
         [SerializeField] private List<TKey> _keys; // Serialized list of keys
         [SerializeField] private List<TValue> _values; // Serialized list of values
 
-        private Dictionary<TKey, TValue> _dictionary = new(); // The underlying dictionary
+        private Dictionary<TKey, TValue> _dictionary;
 
         /// <summary>
         /// Gets or sets the value associated with the specified key.
@@ -79,6 +79,15 @@ namespace Better.Commons.Runtime.DataStructures.SerializedTypes
 
                 return _keys[index];
             }
+        }
+
+        public SerializedDictionary(IEqualityComparer<TKey> comparer)
+        {
+            _dictionary = new(comparer);
+        }
+
+        public SerializedDictionary() : this(EqualityComparer<TKey>.Default)
+        {
         }
 
         /// <summary>
