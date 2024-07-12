@@ -18,7 +18,10 @@ namespace Better.Commons.EditorAddons.Utility
         //TODO: Need to find better way to refresh ReorderableList
         public static void RepaintAllInspectors(SerializedProperty property)
         {
-            if (_repaintInspectors != null) _repaintInspectors.Invoke(null, new object[] { property.propertyPath });
+            if (_repaintInspectors != null)
+            {
+                _repaintInspectors.Invoke(null, new object[] { property.propertyPath });
+            }
         }
     }
 }

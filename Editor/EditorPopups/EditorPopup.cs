@@ -9,43 +9,60 @@ namespace Better.Commons.EditorAddons.EditorPopups
         private Texture _texture;
         private bool _needUpdate = true;
         private bool _destroyTexture;
+        private Action _updateAction;
         public event Action Closed;
         public event Action FocusLost;
         public event Action Destroyed;
 
-        public static EditorPopup Initialize(Texture texture, Rect position, bool needUpdate, bool destroyTexture = false)
+        public static EditorPopup Initialize(Texture texture, Rect position, bool destroyTexture = false)
         {
             var window = HasOpenInstances<EditorPopup>() ? GetWindow<EditorPopup>() : CreateInstance<EditorPopup>();
+            return Initialize(texture, position, destroyTexture, window);
+        }
+
+        private static EditorPopup Initialize(Texture texture, Rect position, bool destroyTexture, EditorPopup window)
+        {
             window.position = position;
             window._texture = texture;
-            window._needUpdate = needUpdate;
+            window._needUpdate = false;
             window._destroyTexture = destroyTexture;
             window.ShowPopup();
             return window;
         }
 
-        public static EditorPopup InitializeAsWindow(Texture texture, Rect position, bool needUpdate,
-            bool destroyTexture = false)
+        public static EditorPopup InitializeAsWindow(Texture texture, Rect position, bool destroyTexture = false)
         {
             var window = HasOpenInstances<EditorPopup>() ? GetWindow<EditorPopup>() : CreateInstance<EditorPopup>();
             window.position = position;
-            window._texture = texture;
-            window._needUpdate = needUpdate;
+            window.SetTexture(texture);
+            window._needUpdate = false;
             window._destroyTexture = destroyTexture;
             window.ShowUtility();
             return window;
         }
 
+        public EditorPopup SetUpdateAction(Action action)
+        {
+            _updateAction = action;
+            _needUpdate = true;
+            return this;
+        }
+
         private void Update()
         {
             if (_needUpdate)
+            {
+                _updateAction?.Invoke();
                 Repaint();
+            }
         }
 
         private void OnGUI()
         {
             if (_texture != null)
+            {
                 GUI.DrawTexture(new Rect(0, 0, position.width, position.height), _texture, ScaleMode.ScaleToFit, true);
+            }
         }
 
         private void OnLostFocus()
@@ -62,13 +79,7 @@ namespace Better.Commons.EditorAddons.EditorPopups
         {
             if (!HasOpenInstances<EditorPopup>()) return;
             var window = GetWindow<EditorPopup>();
-            window.Closed?.Invoke();
-            if (window._destroyTexture && window._texture)
-            {
-                DestroyImmediate(window._texture);
-            }
-
-            window.Close();
+            window.ClosePopup();
         }
 
         public void UpdatePosition(Vector2 newPosition)
@@ -76,6 +87,26 @@ namespace Better.Commons.EditorAddons.EditorPopups
             var rect = position;
             rect.position = newPosition;
             position = rect;
+        }
+
+        public void SetTexture(Texture texture)
+        {
+            _texture = texture;
+        }
+
+        public void ClosePopup()
+        {
+            OnClosePopup();
+            Close();
+        }
+
+        private void OnClosePopup()
+        {
+            Closed?.Invoke();
+            if (_destroyTexture && _texture)
+            {
+                DestroyImmediate(_texture);
+            }
         }
     }
 }

@@ -203,7 +203,7 @@ namespace Better.Commons.EditorAddons.DropDown
         private void ResolveSize(Vector2 size)
         {
             var width = Mathf.Max(position.width, size.x + 50f);
-            var height = UnityEditor.EditorGUIUtility.singleLineHeight * _maxLines + ExtendedGUIUtility.SpaceHeight;
+            var height = UnityEditor.EditorGUIUtility.singleLineHeight * _maxLines + StyleDefinition.SpaceHeight;
             var copy = position;
             copy.position = _display;
             copy.width = width;
