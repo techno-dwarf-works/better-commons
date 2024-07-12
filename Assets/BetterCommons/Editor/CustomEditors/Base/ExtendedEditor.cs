@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Better.Commons.EditorAddons.CustomEditors.Base
 {
@@ -22,20 +23,21 @@ namespace Better.Commons.EditorAddons.CustomEditors.Base
         /// This method called just right after instance created
         /// </summary>
         public abstract void OnEnable();
-        
+
         /// <summary>
         /// Use to draw your inspector
         /// </summary>
-        public abstract void OnInspectorGUI();
-        
+        public abstract VisualElement CreateInspectorGUI();
+
         /// <summary>
         /// This method called than editor disables
         /// </summary>
         public abstract void OnDisable();
-        
+
         /// <summary>
         /// Called when object data in editor is changed
         /// </summary>
-        public abstract void OnChanged();
+        /// <param name="serializedObject"></param>
+        public abstract void OnChanged(SerializedObject serializedObject);
     }
 }

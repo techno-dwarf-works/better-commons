@@ -4,7 +4,6 @@ using System.Linq;
 using Better.Commons.EditorAddons.DropDown.Base;
 using Better.Commons.EditorAddons.Enums;
 using Better.Commons.EditorAddons.Extensions;
-using Better.Commons.EditorAddons.Utility;
 using Better.Commons.Runtime.DataStructures.Tree;
 using Better.Commons.Runtime.Utility;
 using UnityEngine;
@@ -13,7 +12,7 @@ namespace Better.Commons.EditorAddons.DropDown
 {
     public class DropdownCollection : TreeNode<DropdownBase>
     {
-        public void AddItem(GUIContent[] keys, bool state, Action<object> onSelect, object value)
+        public void AddItem(IEnumerable<GUIContent> keys, bool state, Action<object> onSelect, object value)
         {
             if (keys == null)
             {

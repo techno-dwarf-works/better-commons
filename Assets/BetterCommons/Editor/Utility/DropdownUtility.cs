@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace Better.Commons.EditorAddons.Utility
 {
+    //TODO: rework this using VisualElements
     internal static class DropdownUtility
     {
         private const string SearchFieldName = "SearchField";

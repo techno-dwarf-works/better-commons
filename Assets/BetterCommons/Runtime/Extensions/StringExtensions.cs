@@ -16,6 +16,26 @@ namespace Better.Commons.Runtime.Extensions
         {
             return string.IsNullOrWhiteSpace(self);
         }
+        
+        public static string FormatBold(this string text)
+        {
+            return $"<b>{text}</b>";
+        }
+
+        public static string FormatItalic(this string text)
+        {
+            return $"<i>{text}</i>";
+        }
+
+        public static string FormatBoldItalic(this string text)
+        {
+            return $"<b><i>{text}</i></b>";
+        }
+
+        public static string BeautifyFormat(string text)
+        {
+            return $"\"<b><i>{text}</i></b>\"";
+        }
 
         /// <summary>
         /// Makes first char upper
@@ -33,6 +53,22 @@ namespace Better.Commons.Runtime.Extensions
             }
 
             return self.First().ToString().ToUpper() + self.Substring(1);
+        }
+        
+        public static string ConvertToKebabCase(this string self)
+        {
+            if (string.IsNullOrEmpty(self))
+                return self;
+
+            // Check if the string is already in kebab case
+            if (Regex.IsMatch(self, "^[a-z]+(-[a-z]+)*$"))
+                return self;
+
+            // Insert hyphen before each uppercase letter (except the first one)
+            string kebabCase = Regex.Replace(self, "(?<!^)([A-Z])", "-$1");
+
+            // Convert to lowercase
+            return kebabCase.ToLower();
         }
 
         public static bool CompareOrdinal(this string self, string other)
