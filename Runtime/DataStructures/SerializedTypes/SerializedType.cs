@@ -8,7 +8,7 @@ namespace Better.Commons.Runtime.DataStructures.SerializedTypes
     /// Enables the serialization of a System.Type reference within Unity, storing the type's assembly qualified name.
     /// </summary>
     [Serializable]
-    public class SerializedType : ISerializationCallbackReceiver
+    public class SerializedType : ISerializationCallbackReceiver, IEquatable<SerializedType>
     {
         [FormerlySerializedAs("fullQualifiedName")]
         [SerializeField] private protected string _fullQualifiedName; // The full name of the type, used for serialization.
@@ -29,6 +29,7 @@ namespace Better.Commons.Runtime.DataStructures.SerializedTypes
                         _fullQualifiedName = string.Empty;
                     }
                 }
+
                 return _type;
             }
         }
@@ -71,7 +72,7 @@ namespace Better.Commons.Runtime.DataStructures.SerializedTypes
             _type = type;
             _fullQualifiedName = type.AssemblyQualifiedName;
         }
-        
+
         private static bool TryGetReferenceType(string value, out Type type)
         {
             type = !string.IsNullOrEmpty(value) ? Type.GetType(value) : null;
@@ -119,5 +120,30 @@ namespace Better.Commons.Runtime.DataStructures.SerializedTypes
         public static implicit operator string(SerializedType typeReference) => typeReference._fullQualifiedName;
         public static implicit operator Type(SerializedType typeReference) => typeReference.Type;
         public static implicit operator SerializedType(Type type) => new SerializedType(type);
+
+        public bool Equals(SerializedType other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Type == other.Type;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((SerializedType)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            if (Type == null)
+            {
+                return default;
+            }
+
+            return Type.GetHashCode();
+        }
     }
 }
