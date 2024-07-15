@@ -24,7 +24,7 @@ namespace Better.Commons.Runtime.Extensions
             return self.GetParameterNamesOfType(AnimatorControllerParameterType.Bool);
         }
 
-        private static string[] GetAllTriggerNames(this Animator self)
+        public static string[] GetAllTriggerNames(this Animator self)
         {
             return self.GetParameterNamesOfType(AnimatorControllerParameterType.Trigger);
         }
