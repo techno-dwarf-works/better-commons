@@ -3,35 +3,35 @@ using UnityEngine;
 using Parameter = UnityEngine.AnimatorControllerParameter;
 using ParameterType = UnityEngine.AnimatorControllerParameterType;
 
-namespace Better.Commons.EditorAddons.Extensions
+namespace Better.Commons.Runtime.Extensions
 {
     public static class AnimatorExtensions
     {
         #region Get Parameters
 
-        public static string[] GetAllIntegerNames(this Animator animator)
+        public static string[] GetAllIntegerNames(this Animator self)
         {
-            return animator.GetParameterNamesOfType(AnimatorControllerParameterType.Int);
+            return self.GetParameterNamesOfType(AnimatorControllerParameterType.Int);
         }
 
-        public static string[] GetAllFloatNames(this Animator animator)
+        public static string[] GetAllFloatNames(this Animator self)
         {
-            return animator.GetParameterNamesOfType(AnimatorControllerParameterType.Float);
+            return self.GetParameterNamesOfType(AnimatorControllerParameterType.Float);
         }
 
-        public static string[] GetAllBoolNames(this Animator animator)
+        public static string[] GetAllBoolNames(this Animator self)
         {
-            return animator.GetParameterNamesOfType(AnimatorControllerParameterType.Bool);
+            return self.GetParameterNamesOfType(AnimatorControllerParameterType.Bool);
         }
 
-        private static string[] GetAllTriggerNames(this Animator animator)
+        private static string[] GetAllTriggerNames(this Animator self)
         {
-            return animator.GetParameterNamesOfType(AnimatorControllerParameterType.Trigger);
+            return self.GetParameterNamesOfType(AnimatorControllerParameterType.Trigger);
         }
 
-        public static string[] GetParameterNamesOfType(this Animator animator, ParameterType parameterType)
+        public static string[] GetParameterNamesOfType(this Animator self, ParameterType parameterType)
         {
-            return animator.GetParametersOfType(parameterType)
+            return self.GetParametersOfType(parameterType)
                 .Select(p => p.name)
                 .ToArray();
         }
@@ -40,78 +40,78 @@ namespace Better.Commons.EditorAddons.Extensions
 
         #region Has Parameters
 
-        public static bool HasParameter(this Animator animator, string name)
+        public static bool HasParameter(this Animator self, string name)
         {
-            var names = animator.parameters.Select(p => p.name);
+            var names = self.parameters.Select(p => p.name);
             return names.Contains(name);
         }
 
-        public static bool HasInteger(this Animator animator, string name)
+        public static bool HasInteger(this Animator self, string name)
         {
-            return animator.GetAllIntegerNames().Contains(name);
+            return self.GetAllIntegerNames().Contains(name);
         }
 
-        public static bool HasFloat(this Animator animator, string name)
+        public static bool HasFloat(this Animator self, string name)
         {
-            return animator.GetAllFloatNames().Contains(name);
+            return self.GetAllFloatNames().Contains(name);
         }
 
-        public static bool HasBool(this Animator animator, string name)
+        public static bool HasBool(this Animator self, string name)
         {
-            return animator.GetAllBoolNames().Contains(name);
+            return self.GetAllBoolNames().Contains(name);
         }
 
-        public static bool HasTrigger(this Animator animator, string name)
+        public static bool HasTrigger(this Animator self, string name)
         {
-            return animator.GetAllTriggerNames().Contains(name);
+            return self.GetAllTriggerNames().Contains(name);
         }
 
         #endregion
 
         #region Set Parameters
 
-        public static void ResetAllTriggers(this Animator animator)
+        public static void ResetAllTriggers(this Animator self)
         {
-            var names = animator.GetAllTriggerNames();
+            var names = self.GetAllTriggerNames();
 
             for (var i = 0; i < names.Length; i++)
             {
-                animator.ResetTrigger(names[i]);
+                self.ResetTrigger(names[i]);
             }
         }
 
-        public static void SetAllBools(this Animator animator, bool value)
+        public static void SetAllBools(this Animator self, bool value)
         {
-            var names = animator.GetAllBoolNames();
+            var names = self.GetAllBoolNames();
             for (var i = 0; i < names.Length; i++)
             {
-                animator.SetBool(names[i], value);
+                self.SetBool(names[i], value);
             }
         }
 
-        public static void SetAllIntegers(this Animator animator, int value)
+        public static void SetAllIntegers(this Animator self, int value)
         {
-            var names = animator.GetAllIntegerNames();
+            var names = self.GetAllIntegerNames();
             for (var i = 0; i < names.Length; i++)
             {
-                animator.SetInteger(names[i], value);
+                self.SetInteger(names[i], value);
             }
         }
 
-        public static void SetAllFloats(this Animator animator, float value)
+        public static void SetAllFloats(this Animator self, float value)
         {
-            var names = animator.GetAllFloatNames();
+            var names = self.GetAllFloatNames();
             for (var i = 0; i < names.Length; i++)
             {
-                animator.SetFloat(names[i], value);
+                self.SetFloat(names[i], value);
             }
         }
 
         #endregion
 
-        private static Parameter[] GetParametersOfType(this Animator animator, ParameterType parameterType)
+        private static Parameter[] GetParametersOfType(this Animator self, ParameterType parameterType)
         {
-            return animator.parameters
+            return self.parameters
                 .Where(p => p.type == parameterType)
                 .ToArray();
         }

@@ -8,29 +8,29 @@ namespace Better.Commons.EditorAddons.Extensions
     {
         #region Get Parameters
 
-        public static string[] GetAllIntegerNames(this AnimatorController animator)
+        public static string[] GetAllIntegerNames(this AnimatorController self)
         {
-            return animator.GetParameterNamesOfType(AnimatorControllerParameterType.Int);
+            return self.GetParameterNamesOfType(AnimatorControllerParameterType.Int);
         }
 
-        public static string[] GetAllFloatNames(this AnimatorController animator)
+        public static string[] GetAllFloatNames(this AnimatorController self)
         {
-            return animator.GetParameterNamesOfType(AnimatorControllerParameterType.Float);
+            return self.GetParameterNamesOfType(AnimatorControllerParameterType.Float);
         }
 
-        public static string[] GetAllBoolNames(this AnimatorController animator)
+        public static string[] GetAllBoolNames(this AnimatorController self)
         {
-            return animator.GetParameterNamesOfType(AnimatorControllerParameterType.Bool);
+            return self.GetParameterNamesOfType(AnimatorControllerParameterType.Bool);
         }
 
-        private static string[] GetAllTriggerNames(this AnimatorController animator)
+        private static string[] GetAllTriggerNames(this AnimatorController self)
         {
-            return animator.GetParameterNamesOfType(AnimatorControllerParameterType.Trigger);
+            return self.GetParameterNamesOfType(AnimatorControllerParameterType.Trigger);
         }
 
-        public static string[] GetParameterNamesOfType(this AnimatorController animator, AnimatorControllerParameterType parameterType)
+        public static string[] GetParameterNamesOfType(this AnimatorController self, AnimatorControllerParameterType parameterType)
         {
-            return animator.GetParametersOfType(parameterType)
+            return self.GetParametersOfType(parameterType)
                 .Select(p => p.name)
                 .ToArray();
         }
@@ -39,37 +39,37 @@ namespace Better.Commons.EditorAddons.Extensions
 
         #region Has Parameters
 
-        public static bool HasParameter(this AnimatorController animator, string name)
+        public static bool HasParameter(this AnimatorController self, string name)
         {
-            var names = animator.parameters.Select(p => p.name);
+            var names = self.parameters.Select(p => p.name);
             return names.Contains(name);
         }
 
-        public static bool HasInteger(this AnimatorController animator, string name)
+        public static bool HasInteger(this AnimatorController self, string name)
         {
-            return animator.GetAllIntegerNames().Contains(name);
+            return self.GetAllIntegerNames().Contains(name);
         }
 
-        public static bool HasFloat(this AnimatorController animator, string name)
+        public static bool HasFloat(this AnimatorController self, string name)
         {
-            return animator.GetAllFloatNames().Contains(name);
+            return self.GetAllFloatNames().Contains(name);
         }
 
-        public static bool HasBool(this AnimatorController animator, string name)
+        public static bool HasBool(this AnimatorController self, string name)
         {
-            return animator.GetAllBoolNames().Contains(name);
+            return self.GetAllBoolNames().Contains(name);
         }
 
-        public static bool HasTrigger(this AnimatorController animator, string name)
+        public static bool HasTrigger(this AnimatorController self, string name)
         {
-            return animator.GetAllTriggerNames().Contains(name);
+            return self.GetAllTriggerNames().Contains(name);
         }
 
         #endregion
 
-        private static AnimatorControllerParameter[] GetParametersOfType(this AnimatorController animator, AnimatorControllerParameterType parameterType)
+        private static AnimatorControllerParameter[] GetParametersOfType(this AnimatorController self, AnimatorControllerParameterType parameterType)
         {
-            return animator.parameters
+            return self.parameters
                 .Where(p => p.type == parameterType)
                 .ToArray();
         }
