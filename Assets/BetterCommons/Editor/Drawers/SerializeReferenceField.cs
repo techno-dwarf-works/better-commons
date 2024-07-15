@@ -106,15 +106,16 @@ namespace Better.Commons.EditorAddons.Drawers
                 }
                 finally
                 {
+                    if (_bufferLabel != null)
+                    {
+                        _bufferLabel.RemoveFromHierarchy();
+                        _bufferLabel = null;
+                    }
+                    
                     if (TryCreateBufferLabel(property, out var label))
                     {
                         _bufferLabel = label;
                         Insert(0, _bufferLabel);
-                    }
-                    else
-                    {
-                        _bufferLabel?.RemoveFromHierarchy();
-                        _bufferLabel = null;
                     }
                 }
 
@@ -135,7 +136,7 @@ namespace Better.Commons.EditorAddons.Drawers
             var query = this.Query<SerializeReferenceField>().Last();
             if (query == this)
             {
-                if (property.managedReferenceFullTypename.IsNullOrEmpty())
+                if (property.managedReferenceFullTypename.IsNullOrEmpty() || !property.hasVisibleChildren)
                 {
                     label = VisualElementUtility.CreateLabel(PropertyField.label);
                     label.AddToClassList(StyleDefinition.CombineSubState(nameof(SerializeReferenceField), "dummy-label"));
