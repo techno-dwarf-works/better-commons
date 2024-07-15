@@ -23,7 +23,7 @@ namespace Better.Commons.EditorAddons.Extensions
             return self.GetParameterNamesOfType(AnimatorControllerParameterType.Bool);
         }
 
-        private static string[] GetAllTriggerNames(this AnimatorController self)
+        public static string[] GetAllTriggerNames(this AnimatorController self)
         {
             return self.GetParameterNamesOfType(AnimatorControllerParameterType.Trigger);
         }
