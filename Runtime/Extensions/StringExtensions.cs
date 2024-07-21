@@ -32,11 +32,6 @@ namespace Better.Commons.Runtime.Extensions
             return $"<b><i>{text}</i></b>";
         }
 
-        public static string BeautifyFormat(string text)
-        {
-            return $"\"<b><i>{text}</i></b>\"";
-        }
-
         /// <summary>
         /// Makes first char upper
         /// </summary>

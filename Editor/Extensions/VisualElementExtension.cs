@@ -2,6 +2,7 @@
 using Better.Commons.EditorAddons.Enums;
 using Better.Commons.EditorAddons.Utility;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Better.Commons.EditorAddons.Extensions
@@ -34,6 +35,13 @@ namespace Better.Commons.EditorAddons.Extensions
         public static Image AddIcon(this VisualElement self, IconType iconType)
         {
             var image = VisualElementUtility.CreateLabelIcon(iconType);
+            self.Insert(0, image);
+            return image;
+        }
+        
+        public static Image AddIcon(this VisualElement self, Texture texture)
+        {
+            var image = VisualElementUtility.CreateLabelIcon(texture);
             self.Insert(0, image);
             return image;
         }

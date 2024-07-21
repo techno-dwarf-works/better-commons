@@ -236,6 +236,15 @@ namespace Better.Commons.Runtime.Extensions
             self.marginTop = marginTop;
             return self;
         }
+        
+        public static IStyle Margin(this IStyle self, StyleLength marginTop)
+        {
+            self.marginTop = marginTop;
+            self.marginRight = marginTop;
+            self.marginBottom = marginTop;
+            self.marginLeft = marginTop;
+            return self;
+        }
 
         public static IStyle MaxHeight(this IStyle self, StyleLength maxHeight)
         {
@@ -294,6 +303,15 @@ namespace Better.Commons.Runtime.Extensions
         public static IStyle PaddingTop(this IStyle self, StyleLength paddingTop)
         {
             self.paddingTop = paddingTop;
+            return self;
+        }
+        
+        public static IStyle Padding(this IStyle self, StyleLength marginTop)
+        {
+            self.paddingTop = marginTop;
+            self.paddingRight = marginTop;
+            self.paddingBottom = marginTop;
+            self.paddingLeft = marginTop;
             return self;
         }
 
