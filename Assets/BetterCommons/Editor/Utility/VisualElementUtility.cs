@@ -5,6 +5,7 @@ using Better.Commons.Runtime.Extensions;
 using Better.Commons.Runtime.Utility;
 using UnityEditor;
 using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Better.Commons.EditorAddons.Utility
@@ -118,19 +119,26 @@ namespace Better.Commons.EditorAddons.Utility
         public static VisualElement CreateVerticalGroup()
         {
             var element = new VisualElement();
-            element.style.flexDirection = new StyleEnum<FlexDirection>(FlexDirection.Column);
+            element.style.flexDirection = FlexDirection.Column;
             return element;
         }
 
         public static Image CreateLabelIcon(IconType iconType)
         {
             var icon = iconType.GetIcon();
+            return CreateLabelIcon(icon);
+        }
+        
+        public static Image CreateLabelIcon(Texture icon)
+        {
             var image = new Image
             {
                 image = icon
             };
 
-            image.style.Height(StyleDefinition.SingleLineHeight).Width(StyleDefinition.SingleLineHeight).AlignSelf(new StyleEnum<Align>(Align.Center));
+            image.style.Height(StyleDefinition.SingleLineHeight)
+                .Width(StyleDefinition.SingleLineHeight)
+                .AlignSelf(new StyleEnum<Align>(Align.Center));
 
             return image;
         }
