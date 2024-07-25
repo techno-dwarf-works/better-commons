@@ -2298,6 +2298,7 @@ namespace Better.Commons.EditorAddons.Helpers
                 _cachedStyle.wordSpacing = _wordSpacing.Value;
             }
 
+#if UNITY_2022_2_OR_NEWER
             if (_backgroundPositionX.HasValue)
             {
                 _cachedStyle.backgroundPositionX = _backgroundPositionX.Value;
@@ -2322,6 +2323,7 @@ namespace Better.Commons.EditorAddons.Helpers
             {
                 _cachedStyle.unitySliceScale = _unitySliceScale.Value;
             }
+#endif
         }
     }
 }
