@@ -83,6 +83,14 @@ namespace Better.Commons.EditorAddons.Helpers
         private StyleProperty<StyleLength> _width;
         private StyleProperty<StyleLength> _wordSpacing;
 
+#if UNITY_2022_2_OR_NEWER
+        private StyleProperty<StyleBackgroundPosition> _backgroundPositionX;
+        private StyleProperty<StyleBackgroundPosition> _backgroundPositionY;
+        private StyleProperty<StyleBackgroundRepeat> _backgroundRepeat;
+        private StyleProperty<StyleBackgroundSize> _backgroundSize;
+        private StyleProperty<StyleFloat> _unitySliceScale;
+#endif
+
         private IStyle _cachedStyle;
 
         public StyleEnum<Align> alignContent
@@ -1779,6 +1787,118 @@ namespace Better.Commons.EditorAddons.Helpers
             }
         }
 
+#if UNITY_2022_2_OR_NEWER
+        public StyleBackgroundPosition backgroundPositionX
+        {
+            get
+            {
+                if (_backgroundPositionX.HasValue || _cachedStyle == null)
+                {
+                    return _backgroundPositionX.Value;
+                }
+
+                return _cachedStyle.backgroundPositionX;
+            }
+            set
+            {
+                if (_cachedStyle != null)
+                {
+                    _cachedStyle.backgroundPositionX = value;
+                }
+
+                _backgroundPositionX.Value = value;
+            }
+        }
+
+        public StyleBackgroundPosition backgroundPositionY
+        {
+            get
+            {
+                if (_backgroundPositionY.HasValue || _cachedStyle == null)
+                {
+                    return _backgroundPositionY.Value;
+                }
+
+                return _cachedStyle.backgroundPositionY;
+            }
+            set
+            {
+                if (_cachedStyle != null)
+                {
+                    _cachedStyle.backgroundPositionY = value;
+                }
+
+                _backgroundPositionY.Value = value;
+            }
+        }
+
+        public StyleBackgroundRepeat backgroundRepeat
+        {
+            get
+            {
+                if (_backgroundRepeat.HasValue || _cachedStyle == null)
+                {
+                    return _backgroundRepeat.Value;
+                }
+
+                return _cachedStyle.backgroundRepeat;
+            }
+            set
+            {
+                if (_cachedStyle != null)
+                {
+                    _cachedStyle.backgroundRepeat = value;
+                }
+
+                _backgroundRepeat.Value = value;
+            }
+        }
+
+        public StyleBackgroundSize backgroundSize
+        {
+            get
+            {
+                if (_backgroundSize.HasValue || _cachedStyle == null)
+                {
+                    return _backgroundSize.Value;
+                }
+
+                return _cachedStyle.backgroundSize;
+            }
+            set
+            {
+                if (_cachedStyle != null)
+                {
+                    _cachedStyle.backgroundSize = value;
+                }
+
+                _backgroundSize.Value = value;
+            }
+        }
+
+        public StyleFloat unitySliceScale
+        {
+            get
+            {
+                if (_unitySliceScale.HasValue || _cachedStyle == null)
+                {
+                    return _unitySliceScale.Value;
+                }
+
+                return _cachedStyle.unitySliceScale;
+            }
+            set
+            {
+                if (_cachedStyle != null)
+                {
+                    _cachedStyle.unitySliceScale = value;
+                }
+
+                _unitySliceScale.Value = value;
+            }
+        }
+#endif
+
         public void Setup(IStyle style)
         {
             //TODO: Add validation for style
@@ -2176,6 +2296,31 @@ namespace Better.Commons.EditorAddons.Helpers
             if (_wordSpacing.HasValue)
             {
                 _cachedStyle.wordSpacing = _wordSpacing.Value;
+            }
+
+            if (_backgroundPositionX.HasValue)
+            {
+                _cachedStyle.backgroundPositionX = _backgroundPositionX.Value;
+            }
+
+            if (_backgroundPositionY.HasValue)
+            {
+                _cachedStyle.backgroundPositionY = _backgroundPositionY.Value;
+            }
+
+            if (_backgroundRepeat.HasValue)
+            {
+                _cachedStyle.backgroundRepeat = _backgroundRepeat.Value;
+            }
+
+            if (_backgroundSize.HasValue)
+            {
+                _cachedStyle.backgroundSize = _backgroundSize.Value;
+            }
+
+            if (_unitySliceScale.HasValue)
+            {
+                _cachedStyle.unitySliceScale = _unitySliceScale.Value;
             }
         }
     }
