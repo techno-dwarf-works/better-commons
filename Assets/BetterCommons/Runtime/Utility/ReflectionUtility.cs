@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Better.Commons.Runtime.Comparers;
 using Better.Commons.Runtime.Extensions;
 using Better.Internal.Core.Runtime;
@@ -174,7 +175,8 @@ namespace Better.Commons.Runtime.Utility
 
         public static IEnumerable<Type> GetAllInheritedTypes(Type type, params Type[] excludes)
         {
-            return GetAllInheritedTypes(type).Except(excludes, IsSubClassComparer.Instance);
+            var allInheritedTypes = GetAllInheritedTypes(type);
+            return allInheritedTypes.Where(inheritedType => !excludes.Any(exclude => exclude.IsAssignableFrom(inheritedType) || inheritedType.IsSubclassOf(exclude)));
         }
 
         public static IEnumerable<Type> GetAllInheritedTypesWithoutUnityObject(Type type)
