@@ -20,7 +20,11 @@ namespace Better.Commons.EditorAddons.Drawers
 
         private long _updateInterval = 5024;
         private readonly IVisualElementScheduledItem _updateSchedule;
+
+#if !UNITY_2022_2_OR_NEWER
         private Label _bufferLabel;
+#endif
+
         public PropertyField PropertyField { get; set; }
 
         public long UpdateInterval
@@ -53,11 +57,14 @@ namespace Better.Commons.EditorAddons.Drawers
             _referenceType = property.managedReferenceFullTypename;
 
             PropertyField = CreatePropertyField(property, label);
+
+#if !UNITY_2022_2_OR_NEWER
             if (TryCreateBufferLabel(property, out var bufferLabel))
             {
                 _bufferLabel = bufferLabel;
                 Insert(0, _bufferLabel);
             }
+#endif
 
             Add(PropertyField);
 
@@ -106,17 +113,19 @@ namespace Better.Commons.EditorAddons.Drawers
                 }
                 finally
                 {
+#if !UNITY_2022_2_OR_NEWER
                     if (_bufferLabel != null)
                     {
                         _bufferLabel.RemoveFromHierarchy();
                         _bufferLabel = null;
                     }
-                    
+
                     if (TryCreateBufferLabel(property, out var label))
                     {
                         _bufferLabel = label;
                         Insert(0, _bufferLabel);
                     }
+#endif
                 }
 
                 using (var e = ReferenceTypeChangeEvent.GetPooled(_referenceType, newType))
@@ -131,6 +140,8 @@ namespace Better.Commons.EditorAddons.Drawers
             property.Dispose();
         }
 
+
+#if !UNITY_2022_2_OR_NEWER
         private bool TryCreateBufferLabel(SerializedProperty property, out Label label)
         {
             var query = this.Query<SerializeReferenceField>().Last();
@@ -147,6 +158,7 @@ namespace Better.Commons.EditorAddons.Drawers
             label = null;
             return false;
         }
+#endif
 
         private void ReactToEditorChange()
         {
