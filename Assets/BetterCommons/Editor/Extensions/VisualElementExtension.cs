@@ -9,11 +9,11 @@ namespace Better.Commons.EditorAddons.Extensions
 {
     public static class VisualElementExtension
     {
-        public static void OnElementAppear<TElement>(this VisualElement self, Action<TElement> action) where TElement : VisualElement
+        public static IVisualElementScheduledItem OnElementAppear<TElement>(this VisualElement self, Action<TElement> action) where TElement : VisualElement
         {
-            self.OnElementAppear(self, action);
+            return self.OnElementAppear(self, action);
         }
-        
+
         public static void AddClickedEvent(this VisualElement self, SerializedProperty property, EventCallback<ClickEvent, SerializedProperty> action)
         {
             self.RegisterCallback(action, property);
@@ -38,7 +38,7 @@ namespace Better.Commons.EditorAddons.Extensions
             self.Insert(0, image);
             return image;
         }
-        
+
         public static Image AddIcon(this VisualElement self, Texture texture)
         {
             var image = VisualElementUtility.CreateLabelIcon(texture);
