@@ -12,9 +12,6 @@ namespace Better.Commons.EditorAddons.Drawers.Container
 {
     public class ElementsContainer
     {
-        private long _updateInterval = 5024;
-        private IVisualElementScheduledItem _updateSchedule;
-
         public VisualElement RootElement { get; set; }
         public PrewarmElement CoreElement { get; }
         public bool Used { get; private set; }
@@ -25,16 +22,6 @@ namespace Better.Commons.EditorAddons.Drawers.Container
 
         public event Action<ElementsContainer> SerializedObjectChanged;
         public event Action<ElementsContainer> SerializedPropertyChanged;
-
-        public long UpdateInterval
-        {
-            get => _updateInterval;
-            set
-            {
-                _updateInterval = Math.Max(value, 100);
-                _updateSchedule.Every(_updateInterval);
-            }
-        }
 
         public ElementsContainer(SerializedProperty serializedProperty)
         {

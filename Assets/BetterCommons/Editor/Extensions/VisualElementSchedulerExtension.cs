@@ -6,28 +6,30 @@ namespace Better.Commons.EditorAddons.Extensions
 {
     public static class VisualElementSchedulerExtension
     {
-        public static void OnElementAppear<TElement>(this IVisualElementScheduler self, VisualElement element, Action<TElement> action) 
+        public static IVisualElementScheduledItem OnElementAppear<TElement>(this IVisualElementScheduler self, VisualElement element, Action<TElement> action)
             where TElement : VisualElement
         {
             if (self == null)
             {
-                DebugUtility.LogException<ArgumentNullException>(nameof(self));
-                return;
+                throw new ArgumentNullException(nameof(self));
             }
 
             if (action == null)
             {
-                DebugUtility.LogException<ArgumentNullException>(nameof(action));
-                return;
+                throw new ArgumentNullException(nameof(action));
             }
 
-            self.Execute(OnExecute).Until(() => element.Q<TElement>() != null);
-            return;
+
+            return self.Execute(OnExecute).Until(() => element.Q<TElement>() != null);
 
             void OnExecute()
             {
                 var queriedElement = element.Q<TElement>();
-                if(queriedElement == null) return;
+                if (queriedElement == null)
+                {
+                    return;
+                }
+
                 action.Invoke(queriedElement);
             }
         }
