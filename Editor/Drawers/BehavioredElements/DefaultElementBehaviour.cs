@@ -29,19 +29,23 @@ namespace Better.Commons.EditorAddons.Drawers.BehavioredElements
 
             var labelParent = label?.parent;
             if (labelParent == null) return;
-            if (labelParent.Contains(BehavioredElement)) return;
 
-            BehavioredElement.RemoveFromHierarchy();
             label.style
                 .Width(StyleDefinition.LabelWidthStyle)
                 .FlexGrow(new StyleFloat(1f));
 
             labelParent.style.FlexDirection(new StyleEnum<FlexDirection>(FlexDirection.Row));
-            labelParent.Add(BehavioredElement);
+
+            if (!labelParent.Contains(BehavioredElement))
+            {
+                BehavioredElement.RemoveFromHierarchy();
+
+                labelParent.Add(BehavioredElement);
+            }
 
             var checkmark = labelParent.Q<VisualElement>("unity-checkmark");
             checkmark?.style.AlignSelf(new StyleEnum<Align>(Align.Center));
-            
+
             var parent = labelParent.parent as Toggle;
             parent?.style.MarginBottom(0);
         }
