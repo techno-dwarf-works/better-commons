@@ -7,7 +7,7 @@ namespace Better.Commons.EditorAddons.Drawers.BehavioredElements
     public class DefaultElementBehaviour<TElement> : IElementBehaviour<TElement> where TElement : VisualElement, new()
     {
         protected BehavioredElement<TElement> BehavioredElement { get; private set; }
-        
+
         public virtual void OnLink(BehavioredElement<TElement> behavioredElement)
         {
             BehavioredElement = behavioredElement;
@@ -19,7 +19,7 @@ namespace Better.Commons.EditorAddons.Drawers.BehavioredElements
                 .MarginTop(zeroLength)
                 .Width(new StyleLength(new Length(100, LengthUnit.Percent)));
         }
-        
+
         public virtual void OnAttach(VisualElement root)
         {
             if (root is not Label label)
@@ -27,12 +27,15 @@ namespace Better.Commons.EditorAddons.Drawers.BehavioredElements
                 label = root.Q<Label>();
             }
 
+            var labelParent = label?.parent;
+            if (labelParent == null) return;
+            if (labelParent.Contains(BehavioredElement)) return;
+
             BehavioredElement.RemoveFromHierarchy();
             label.style
                 .Width(StyleDefinition.LabelWidthStyle)
                 .FlexGrow(new StyleFloat(1f));
-            
-            var labelParent = label.parent;
+
             labelParent.style.FlexDirection(new StyleEnum<FlexDirection>(FlexDirection.Row));
             labelParent.Add(BehavioredElement);
 
