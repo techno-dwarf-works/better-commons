@@ -41,6 +41,9 @@ namespace Better.Commons.EditorAddons.Drawers.BehavioredElements
 
             var checkmark = labelParent.Q<VisualElement>("unity-checkmark");
             checkmark?.style.AlignSelf(new StyleEnum<Align>(Align.Center));
+            
+            var parent = labelParent.parent as Toggle;
+            parent?.style.MarginBottom(0);
         }
     }
 }
