@@ -59,7 +59,7 @@ namespace Better.Commons.EditorAddons.Drawers
             PropertyField = CreatePropertyField(property, label);
 
 #if !UNITY_2022_2_OR_NEWER
-            if (TryCreateBufferLabel(property, out var bufferLabel))
+            if (IsLastSerializeField() && TryCreateBufferLabel(property, out var bufferLabel))
             {
                 _bufferLabel = bufferLabel;
                 Insert(0, _bufferLabel);
@@ -98,6 +98,15 @@ namespace Better.Commons.EditorAddons.Drawers
                 return;
             }
 
+#if !UNITY_2022_2_OR_NEWER
+            var isLast = IsLastSerializeField();
+            if (!isLast && _bufferLabel != null)
+            {
+                _bufferLabel.RemoveFromHierarchy();
+                _bufferLabel = null;
+            }
+#endif
+
             var newType = property.managedReferenceFullTypename;
 
             if (_referenceType != newType)
@@ -114,13 +123,7 @@ namespace Better.Commons.EditorAddons.Drawers
                 finally
                 {
 #if !UNITY_2022_2_OR_NEWER
-                    if (_bufferLabel != null)
-                    {
-                        _bufferLabel.RemoveFromHierarchy();
-                        _bufferLabel = null;
-                    }
-
-                    if (TryCreateBufferLabel(property, out var label))
+                    if (isLast && TryCreateBufferLabel(property, out var label))
                     {
                         _bufferLabel = label;
                         Insert(0, _bufferLabel);
@@ -142,17 +145,20 @@ namespace Better.Commons.EditorAddons.Drawers
 
 
 #if !UNITY_2022_2_OR_NEWER
-        private bool TryCreateBufferLabel(SerializedProperty property, out Label label)
+
+        private bool IsLastSerializeField()
         {
             var query = this.Query<SerializeReferenceField>().Last();
-            if (query == this)
+            return query == this;
+        }
+
+        private bool TryCreateBufferLabel(SerializedProperty property, out Label label)
+        {
+            if (property.managedReferenceFullTypename.IsNullOrEmpty() || !property.hasVisibleChildren)
             {
-                if (property.managedReferenceFullTypename.IsNullOrEmpty() || !property.hasVisibleChildren)
-                {
-                    label = VisualElementUtility.CreateLabel(PropertyField.label);
-                    label.AddToClassList(StyleDefinition.CombineSubState(nameof(SerializeReferenceField), "dummy-label"));
-                    return true;
-                }
+                label = VisualElementUtility.CreateLabel(PropertyField.label);
+                label.AddToClassList(StyleDefinition.CombineSubState(nameof(SerializeReferenceField), "dummy-label"));
+                return true;
             }
 
             label = null;
