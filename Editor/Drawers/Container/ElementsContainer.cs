@@ -118,7 +118,7 @@ namespace Better.Commons.EditorAddons.Drawers.Container
 
         private void OnGeometryChanged(VisualElement element)
         {
-            var label = element.Q<Label>();
+            var label = element.Q<Label>(className: PropertyField.labelUssClassName);
             if (label != null)
             {
                 LabelContainer.Setup(label);
