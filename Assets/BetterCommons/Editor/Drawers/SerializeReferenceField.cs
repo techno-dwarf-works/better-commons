@@ -157,6 +157,7 @@ namespace Better.Commons.EditorAddons.Drawers
             if (property.managedReferenceFullTypename.IsNullOrEmpty() || !property.hasVisibleChildren)
             {
                 label = VisualElementUtility.CreateLabel(PropertyField.label);
+                label.AddToClassList(PropertyField.labelUssClassName);
                 label.AddToClassList(StyleDefinition.CombineSubState(nameof(SerializeReferenceField), "dummy-label"));
                 return true;
             }
