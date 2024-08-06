@@ -51,6 +51,7 @@ namespace Better.Commons.EditorAddons.Drawers.Container
             }
 
             RootElement.Add(CoreElement);
+            propertyField.name = $"{nameof(ElementsContainer)}_{SerializedProperty.propertyPath}";
             propertyField.RegisterCallback<SerializedPropertyChangeEvent>(OnSerializedPropertyChanged);
             propertyField.RegisterCallback<GeometryChangedEvent>(ScheduleUpdateGeometry);
             propertyField.style.FlexGrow(StyleDefinition.OneStyleFloat);
@@ -111,14 +112,15 @@ namespace Better.Commons.EditorAddons.Drawers.Container
         private void ScheduleUpdateGeometry(GeometryChangedEvent changedEvent)
         {
             if (changedEvent.target is not PropertyField element) return;
-            {
-                element.schedule.Execute(() => OnGeometryChanged(element));
-            }
+
+            element.schedule.Execute(() => OnGeometryChanged(element));
         }
 
         private void OnGeometryChanged(VisualElement element)
         {
-            var label = element.Q<Label>(className: PropertyField.labelUssClassName);
+            var propertyPath = SerializedProperty.propertyPath;
+            var builder = element.Query<PropertyField>().Where(field => field.bindingPath.CompareOrdinal(propertyPath)).Build();
+            var label = builder.First().Query<Label>().Class(PropertyField.labelUssClassName).First();
             if (label != null)
             {
                 LabelContainer.Setup(label);
