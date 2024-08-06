@@ -119,8 +119,10 @@ namespace Better.Commons.EditorAddons.Drawers.Container
         private void OnGeometryChanged(VisualElement element)
         {
             var propertyPath = SerializedProperty.propertyPath;
-            var builder = element.Query<PropertyField>().Where(field => field.bindingPath.CompareOrdinal(propertyPath)).Build();
-            var label = builder.First().Query<Label>().Class(PropertyField.labelUssClassName).First();
+            var propertyFields = element.Query<PropertyField>().Where(field => field.bindingPath.CompareOrdinal(propertyPath)).Build();
+            var parentField = propertyFields.First();
+            var labels = parentField.Query<Label>().Class(PropertyField.labelUssClassName).Where(field => field.parent.Equals(parentField));
+            var label = labels.First();
             if (label != null)
             {
                 LabelContainer.Setup(label);
