@@ -121,7 +121,11 @@ namespace Better.Commons.EditorAddons.Drawers.Container
             var propertyPath = SerializedProperty.propertyPath;
             var propertyFields = element.Query<PropertyField>().Where(field => field.bindingPath.CompareOrdinal(propertyPath)).Build();
             var parentField = propertyFields.First();
-            var labels = parentField.Query<Label>().Class(PropertyField.labelUssClassName).Where(field => field.parent.Equals(parentField));
+            var labels = parentField.Query<Label>().Class(PropertyField.labelUssClassName).Where(field =>
+            {
+                var firstAncestor = field.GetFirstAncestorOfType<PropertyField>();
+                return firstAncestor != null && firstAncestor.Equals(parentField);
+            });
             var label = labels.First();
             if (label != null)
             {
