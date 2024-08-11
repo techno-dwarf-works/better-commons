@@ -80,9 +80,10 @@ namespace Better.Commons.EditorAddons.Drawers
             TypeHandlersBinder = HandlerBinderRegistry.GetMap<THandler>();
 
             PopulateContainer(container);
-
             container.Use();
-
+            
+            var subState = StyleDefinition.CombineSubState(typeof(TAttribute).Name, GetType().Name);
+            container.RootElement.AddToClassList(subState);
             return container.RootElement;
         }
 
