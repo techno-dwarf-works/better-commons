@@ -1,7 +1,7 @@
 {
   "name": "com.tdw.better.commons",
   "displayName": "Better Commons",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "unity": "2021.3",
   "description": " ",
   "dependencies": {
