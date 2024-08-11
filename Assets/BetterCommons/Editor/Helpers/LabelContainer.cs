@@ -27,7 +27,7 @@ namespace Better.Commons.EditorAddons.Helpers
             //TODO: Add validation for label
             _label = label;
             _styleContainer.Setup(_label.style);
-            
+
             Rebuild();
         }
 
@@ -44,6 +44,17 @@ namespace Better.Commons.EditorAddons.Helpers
 
         public void Reset()
         {
+            _label = null;
+            _styleContainer.Reset();
+        }
+
+        public void SoftReset()
+        {
+            if (_label is { panel: not null })
+            {
+                return;
+            }
+
             _label = null;
             _styleContainer.Reset();
         }

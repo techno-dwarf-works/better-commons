@@ -113,19 +113,27 @@ namespace Better.Commons.EditorAddons.Drawers.Container
         {
             if (changedEvent.target is not PropertyField element) return;
 
-            element.schedule.Execute(OnGeometryChanged);
+            element.schedule.Execute(() => OnGeometryChanged(element));
         }
 
-        private void OnGeometryChanged()
+        private void OnGeometryChanged(VisualElement element)
         {
-            var label = RootElement.Query<Label>().Class(PropertyField.labelUssClassName).First();
+            var propertyPath = SerializedProperty.propertyPath;
+            var propertyFields = element.Query<PropertyField>().Where(field => field.bindingPath.CompareOrdinal(propertyPath)).Build();
+            var parentField = propertyFields.First();
+            var labels = parentField.Query<Label>().Class(PropertyField.labelUssClassName).Where(field =>
+            {
+                var firstAncestor = field.GetFirstAncestorOfType<PropertyField>();
+                return firstAncestor != null && firstAncestor.Equals(parentField);
+            });
+            var label = labels.First();
             if (label != null)
             {
                 LabelContainer.Setup(label);
             }
             else
             {
-                LabelContainer.Reset();
+                LabelContainer.SoftReset();
             }
         }
     }
