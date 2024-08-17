@@ -1,18 +1,33 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Better.Commons.Runtime.Utility
 {
     public static class TaskUtility
     {
-        public static Task WaitForSeconds(float seconds, CancellationToken cancellationToken = default)
+        public static async Task WaitForSeconds(float seconds, CancellationToken cancellationToken = default)
+        {
+            if (seconds <= 0 || cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            while (seconds > 0 && !cancellationToken.IsCancellationRequested)
+            {
+                await Task.Yield();
+                seconds -= Time.unscaledDeltaTime;
+            }
+        }
+
+        public static Task Delay(float seconds, CancellationToken cancellationToken = default)
         {
             if (seconds <= 0 || cancellationToken.IsCancellationRequested)
             {
                 return Task.CompletedTask;
             }
-            
+
             var millisecondsDelay = TimeUtility.SecondsToMilliseconds(seconds);
             return Task.Delay(millisecondsDelay, cancellationToken);
         }
