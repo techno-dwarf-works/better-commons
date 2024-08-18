@@ -108,10 +108,14 @@ namespace Better.Commons.EditorAddons.Extensions
             var fieldPath = self.propertyPath;
             if (self.propertyType == SerializedPropertyType.ManagedReference)
             {
-                var objectTypename = self.managedReferenceFullTypename;
-                if (!SerializedPropertyUtility.GetTypeFromManagedReferenceFullTypeName(objectTypename, out classType))
+                if (!self.managedReferenceFullTypename.IsNullOrEmpty())
                 {
-                    return null;
+                    var objectTypename = self.managedReferenceFullTypename;
+
+                    if (!SerializedPropertyUtility.GetTypeFromManagedReferenceFullTypeName(objectTypename, out classType))
+                    {
+                        return null;
+                    }
                 }
 
                 fieldPath = self.propertyPath;
@@ -231,7 +235,7 @@ namespace Better.Commons.EditorAddons.Extensions
             {
                 return false;
             }
-            
+
             try
             {
                 if (PropertyPrtInfo != null && ObjectPrtInfo != null)
