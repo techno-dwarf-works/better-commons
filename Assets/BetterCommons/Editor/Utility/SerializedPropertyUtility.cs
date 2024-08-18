@@ -60,8 +60,11 @@ namespace Better.Commons.EditorAddons.Utility
                 var classNamePart = parts[1];
                 managedReferenceInstanceType = Type.GetType($"{classNamePart}, {assemblyPart}");
             }
+            else
+            {
+                managedReferenceInstanceType = null;
+            }
 
-            managedReferenceInstanceType = null;
             return managedReferenceInstanceType != null;
         }
 
