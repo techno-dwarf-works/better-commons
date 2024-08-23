@@ -68,6 +68,14 @@ namespace Better.Commons.EditorAddons.Utility
             return managedReferenceInstanceType != null;
         }
 
+        public static void CleanCacheForProperty(Type type, string propertyPath)
+        {
+            propertyPath = ArrayDataWithIndexRegex.Replace(propertyPath, ArrayElementDotName);
+            var cache = new CachePropertyKey(type, propertyPath);
+
+            FieldInfoFromPropertyPathCache.Remove(cache);
+        }
+
         public static CachedFieldInfo GetFieldInfoFromPropertyPath(Type type, string propertyPath)
         {
             var arrayElement = ArrayDataWithIndexRegexAny.IsMatch(propertyPath);
@@ -118,9 +126,17 @@ namespace Better.Commons.EditorAddons.Utility
                 fieldInfo = foundField;
                 type = fieldInfo.FieldType;
                 
-                if (i >= parts.Length - 1 || parts[i + 1] != ArrayElementName || !type.IsArrayOrList()) continue;
+                if (i >= parts.Length - 1 || parts[i + 1] != ArrayElementName || !type.IsArrayOrList())
+                {
+                    continue;
+                }
                 i++;
                 type = type.GetCollectionElementType();
+
+                if (fieldInfo != null)
+                {
+                    return false;
+                }
             }
 
             return false;
