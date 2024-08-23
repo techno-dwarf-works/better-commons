@@ -119,6 +119,10 @@ namespace Better.Commons.EditorAddons.Extensions
                 }
 
                 fieldPath = self.propertyPath;
+                if (classType != null)
+                {
+                    SerializedPropertyUtility.CleanCacheForProperty(classType, fieldPath);
+                }
             }
 
             if (classType == null)
