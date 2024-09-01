@@ -21,7 +21,7 @@ namespace Better.Commons.EditorAddons.CustomEditors
         private List<ExtendedEditor> _postEditors = new List<ExtendedEditor>();
         private bool _overrideDefault;
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             try
             {
@@ -123,7 +123,7 @@ namespace Better.Commons.EditorAddons.CustomEditors
             return container;
         }
 
-        private void OnSerializedObjectTrack(SerializedObject serializedObject)
+        protected virtual void OnSerializedObjectTrack(SerializedObject serializedObject)
         {
             for (var i = 0; i < _preEditors.Count; i++)
             {
@@ -136,7 +136,7 @@ namespace Better.Commons.EditorAddons.CustomEditors
             }
         }
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             for (var i = 0; i < _preEditors.Count; i++)
             {
