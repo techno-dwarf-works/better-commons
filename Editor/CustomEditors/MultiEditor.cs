@@ -76,7 +76,7 @@ namespace Better.Commons.EditorAddons.CustomEditors
                 var (type, betterEditorAttribute) = extensions[index];
                 if (!_overrideDefault && betterEditorAttribute.OverrideDefaultEditor)
                 {
-                    _overrideDefault = true;
+                    SetOverrideDefault(true);
                 }
 
                 var extension = (ExtendedEditor)Activator.CreateInstance(type, paramArray);
@@ -92,8 +92,15 @@ namespace Better.Commons.EditorAddons.CustomEditors
             }
         }
 
+        protected void SetOverrideDefault(bool value)
+        {
+            _overrideDefault = value;
+        }
+
         public override VisualElement CreateInspectorGUI()
         {
+            var m = Editor.CreateInstance<MultiEditor>();
+            m.SetOverrideDefault(false);
             var container = new VisualElement();
 
             for (var i = 0; i < _preEditors.Count; i++)
