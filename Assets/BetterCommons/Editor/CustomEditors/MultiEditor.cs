@@ -99,35 +99,41 @@ namespace Better.Commons.EditorAddons.CustomEditors
 
         public override VisualElement CreateInspectorGUI()
         {
-            var m = Editor.CreateInstance<MultiEditor>();
-            m.SetOverrideDefault(false);
             var container = new VisualElement();
 
-            for (var i = 0; i < _preEditors.Count; i++)
-            {
-                var element = _preEditors[i].CreateInspectorGUI();
-                if (element != null)
-                {
-                    container.Add(element);
-                }
-            }
+            IteratePreEditors(container);
 
             if (!_overrideDefault)
             {
                 InspectorElement.FillDefaultInspector(container, serializedObject, this);
             }
 
-            for (var i = 0; i < _postEditors.Count; i++)
+            IteratePostEditors(container);
+
+            container.TrackSerializedObjectValue(serializedObject, OnSerializedObjectTrack);
+            return container;
+        }
+
+        protected void IteratePreEditors(VisualElement container)
+        {
+            IterateEditors(_preEditors, container);
+        }
+        
+        protected void IteratePostEditors(VisualElement container)
+        {
+            IterateEditors(_postEditors, container);
+        }
+
+        private void IterateEditors(List<ExtendedEditor> extendedEditors, VisualElement container)
+        {
+            for (var i = 0; i < extendedEditors.Count; i++)
             {
-                var element = _postEditors[i].CreateInspectorGUI();
+                var element = extendedEditors[i].CreateInspectorGUI();
                 if (element != null)
                 {
                     container.Add(element);
                 }
             }
-
-            container.TrackSerializedObjectValue(serializedObject, OnSerializedObjectTrack);
-            return container;
         }
 
         protected virtual void OnSerializedObjectTrack(SerializedObject serializedObject)
