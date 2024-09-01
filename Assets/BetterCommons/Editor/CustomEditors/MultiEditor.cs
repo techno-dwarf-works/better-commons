@@ -15,7 +15,7 @@ namespace Better.Commons.EditorAddons.CustomEditors
 {
     [CanEditMultipleObjects]
     [CustomEditor(typeof(Object), true)]
-    internal sealed class MultiEditor : Editor
+    public class MultiEditor : Editor
     {
         private List<ExtendedEditor> _preEditors = new List<ExtendedEditor>();
         private List<ExtendedEditor> _postEditors = new List<ExtendedEditor>();
