@@ -137,6 +137,16 @@ namespace Better.Commons.EditorAddons.Drawers
                     panel?.visualTree.SendEvent(e);
                 }
 
+                //Fix: fixing SerializedPropertyChangeEvent not been sent when set new type to null
+                if (newType.IsNullOrEmpty())
+                {
+                    using (var e = SerializedPropertyChangeEvent.GetPooled(property))
+                    {
+                        e.target = this;
+                        panel?.visualTree.SendEvent(e);
+                    }
+                }
+
                 _referenceType = newType;
             }
 
