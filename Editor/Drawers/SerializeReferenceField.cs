@@ -137,14 +137,11 @@ namespace Better.Commons.EditorAddons.Drawers
                     panel?.visualTree.SendEvent(e);
                 }
 
-                //Fix: fixing SerializedPropertyChangeEvent not been sent when set new type to null
-                if (newType.IsNullOrEmpty())
+                //Fix: fixing SerializedPropertyChangeEvent not been sent when set new type to null or time has no sub properties
+                using (var e = SerializedPropertyChangeEvent.GetPooled(property))
                 {
-                    using (var e = SerializedPropertyChangeEvent.GetPooled(property))
-                    {
-                        e.target = PropertyField;
-                        panel?.visualTree.SendEvent(e);
-                    }
+                    e.target = PropertyField;
+                    panel?.visualTree.SendEvent(e);
                 }
 
                 _referenceType = newType;
