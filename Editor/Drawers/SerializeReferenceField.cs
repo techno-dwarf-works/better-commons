@@ -25,7 +25,7 @@ namespace Better.Commons.EditorAddons.Drawers
         private Label _bufferLabel;
 #endif
 
-        public PropertyField PropertyField { get; set; }
+        public PropertyField PropertyField { get; private set; }
 
         public long UpdateInterval
         {
@@ -142,7 +142,7 @@ namespace Better.Commons.EditorAddons.Drawers
                 {
                     using (var e = SerializedPropertyChangeEvent.GetPooled(property))
                     {
-                        e.target = this;
+                        e.target = PropertyField;
                         panel?.visualTree.SendEvent(e);
                     }
                 }
