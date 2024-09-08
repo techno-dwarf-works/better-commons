@@ -176,8 +176,7 @@ namespace Better.Commons.EditorAddons.Drawers
 
         private bool HasLabel(SerializedProperty property)
         {
-            var query = this.Query<SerializeReferenceField>().Last();
-            return query == this || ValidateBaseField(property);
+            return ValidateBaseField(property);
         }
 
         private bool ValidateBaseField(SerializedProperty property)
