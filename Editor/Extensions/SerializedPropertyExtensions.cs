@@ -22,6 +22,12 @@ namespace Better.Commons.EditorAddons.Extensions
         private static readonly MethodInfo VerifyMethod;
         private static readonly FieldInfo PropertyPrtInfo;
         private static readonly FieldInfo ObjectPrtInfo;
+        
+        private struct PropertyItemInfo
+        {
+            public string PropertyName { get; set; }
+            public int ElementIndex { get; set; }
+        }
 
         static SerializedPropertyExtensions()
         {
@@ -177,7 +183,7 @@ namespace Better.Commons.EditorAddons.Extensions
                 return string.Empty;
             }
 
-            string propertyPath = self.propertyPath;
+            var propertyPath = self.propertyPath;
             return SerializedPropertyUtility.GetPropertyParentList(propertyPath);
         }
 
@@ -316,9 +322,9 @@ namespace Better.Commons.EditorAddons.Extensions
                 return null;
             }
 
-            string propertyPath = self.propertyPath;
+            var propertyPath = self.propertyPath;
             object value = self.serializedObject.targetObject;
-            int i = 0;
+            var i = 0;
             while (NextPathComponent(propertyPath, ref i, out var token))
                 value = GetPathComponentValue(value, token);
             return value;
@@ -342,12 +348,12 @@ namespace Better.Commons.EditorAddons.Extensions
                 return;
             }
 
-            var container = GetPropertyContainer(self, out var deferredToken);
+            var container = GetPropertyParent(self, out var deferredToken);
 
             SetPathComponentValue(container, deferredToken, value);
         }
 
-        public static object GetPropertyContainer(this SerializedProperty self)
+        public static object GetPropertyParent(this SerializedProperty self)
         {
             if (self == null)
             {
@@ -355,10 +361,10 @@ namespace Better.Commons.EditorAddons.Extensions
                 return null;
             }
 
-            return GetPropertyContainer(self, out _);
+            return GetPropertyParent(self, out _);
         }
 
-        public static object GetLastNonCollectionContainer(this SerializedProperty self)
+        public static object GetLastNonCollectionParent(this SerializedProperty self)
         {
             if (self == null)
             {
@@ -366,7 +372,7 @@ namespace Better.Commons.EditorAddons.Extensions
                 return null;
             }
 
-            var containers = self.GetPropertyContainers();
+            var containers = self.GetPropertyParents();
             for (var index = containers.Count - 1; index >= 0; index--)
             {
                 var container = containers[index];
@@ -377,45 +383,43 @@ namespace Better.Commons.EditorAddons.Extensions
             return containers.FirstOrDefault();
         }
 
-        public static List<object> GetPropertyContainers(this SerializedProperty self)
+        public static List<PropertyParent> GetPropertyParents(this SerializedProperty self)
+        {
+            var list = new List<PropertyParent>();
+            self.CollectPropertyParents(ref list);
+            return list;
+        }
+
+        public static void CollectPropertyParents(this SerializedProperty self, ref List<PropertyParent> propertyParents)
         {
             if (self == null)
             {
                 DebugUtility.LogException<ArgumentNullException>(nameof(self));
-                return new List<object>();
+                return;
             }
 
-            string propertyPath = self.propertyPath;
-            object container = self.serializedObject.targetObject;
+            var propertyPath = self.propertyPath;
+            object parent = self.serializedObject.targetObject;
 
-            int i = 0;
-            PropertyItemInfo deferredToken;
-            var list = new List<object>();
-            list.Add(container);
-            NextPathComponent(propertyPath, ref i, out deferredToken);
+            var i = 0;
+            NextPathComponent(propertyPath, ref i, out var deferredToken);
+
+            propertyParents.Add(new PropertyParent(parent, deferredToken.PropertyName, deferredToken.ElementIndex));
+
             while (NextPathComponent(propertyPath, ref i, out var token))
             {
-                container = GetPathComponentValue(container, deferredToken);
+                parent = GetPathComponentValue(parent, deferredToken);
                 deferredToken = token;
-                list.Add(container);
+                propertyParents.Add(new PropertyParent(parent, deferredToken.PropertyName, deferredToken.ElementIndex));
             }
-
-            if (container.GetType().IsValueType)
-            {
-                var message =
-                    $"Cannot use SerializedObject.SetValue on a struct object, as the result will be set on a temporary. Either change {container.GetType().Name} to a class, or use SetValue with a parent member.";
-                Debug.LogWarning(message);
-            }
-
-            return list;
         }
 
-        private static object GetPropertyContainer(SerializedProperty self, out PropertyItemInfo deferredToken)
+        private static object GetPropertyParent(SerializedProperty self, out PropertyItemInfo deferredToken)
         {
-            string propertyPath = self.propertyPath;
+            var propertyPath = self.propertyPath;
             object container = self.serializedObject.targetObject;
 
-            int i = 0;
+            var i = 0;
             NextPathComponent(propertyPath, ref i, out deferredToken);
             while (NextPathComponent(propertyPath, ref i, out var token))
             {
@@ -441,7 +445,7 @@ namespace Better.Commons.EditorAddons.Extensions
                 return true;
             }
 
-            int dot = propertyPath.IndexOf('.', index);
+            var dot = propertyPath.IndexOf('.', index);
             if (dot == -1)
             {
                 component.PropertyName = propertyPath.Substring(index);
@@ -456,20 +460,20 @@ namespace Better.Commons.EditorAddons.Extensions
             return true;
         }
 
-        private static object GetPathComponentValue(object container, PropertyItemInfo component)
+        private static object GetPathComponentValue(object container, PropertyItemInfo propertyItemInfo)
         {
-            if (component.PropertyName == null)
-                return ((IList)container)[component.ElementIndex];
+            if (propertyItemInfo.PropertyName == null)
+                return ((IList)container)[propertyItemInfo.ElementIndex];
 
-            return GetMemberValue(container, component.PropertyName);
+            return GetMemberValue(container, propertyItemInfo.PropertyName);
         }
 
-        private static void SetPathComponentValue(object container, PropertyItemInfo component, object value)
+        private static void SetPathComponentValue(object container, PropertyItemInfo propertyItemInfo, object value)
         {
-            if (component.PropertyName == null)
-                ((IList)container)[component.ElementIndex] = value;
+            if (propertyItemInfo.PropertyName == null)
+                ((IList)container)[propertyItemInfo.ElementIndex] = value;
             else
-                SetMemberValue(container, component.PropertyName, value);
+                SetMemberValue(container, propertyItemInfo.PropertyName, value);
         }
 
         private static object GetMemberValue(object container, string name)
@@ -478,7 +482,7 @@ namespace Better.Commons.EditorAddons.Extensions
                 return null;
             var type = container.GetType();
             var members = TraverseBaseClasses(type, name);
-            for (int i = 0; i < members.Count; ++i)
+            for (var i = 0; i < members.Count; ++i)
             {
                 if (members[i] is FieldInfo field)
                     return field.GetValue(container);
@@ -512,7 +516,7 @@ namespace Better.Commons.EditorAddons.Extensions
         {
             var type = container.GetType();
             var members = type.GetMember(name, Defines.FieldsFlags);
-            for (int i = 0; i < members.Length; ++i)
+            for (var i = 0; i < members.Length; ++i)
             {
                 if (members[i] is FieldInfo field)
                 {
