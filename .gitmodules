@@ -1,0 +1,4 @@
+[submodule "BetterInternalCore"]
+	path = Assets/BetterInternalCore
+	url = git@github.com:techno-dwarf-works/better-internal-core.git
+	branch = upm
