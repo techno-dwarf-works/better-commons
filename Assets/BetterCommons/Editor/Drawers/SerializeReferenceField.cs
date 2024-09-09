@@ -61,17 +61,8 @@ namespace Better.Commons.EditorAddons.Drawers
             PropertyType = property.propertyType;
             PropertyField = CreatePropertyField(property, label);
 
-#if !UNITY_2022_2_OR_NEWER
-            var hasLabel = HasLabel(property);
-            if (!hasLabel && TryCreateBufferLabel(property, out var bufferLabel))
-            {
-                _bufferLabel = bufferLabel;
-                Insert(0, _bufferLabel);
-            }
-#endif
-
             Add(PropertyField);
-
+            
             _updateSchedule = schedule.Execute(Update).Every(_updateInterval);
             style.FlexGrow(StyleDefinition.OneStyleFloat);
             RegisterCallback<AttachToPanelEvent>(OnAttachToPanel);
@@ -103,12 +94,7 @@ namespace Better.Commons.EditorAddons.Drawers
             }
 
 #if !UNITY_2022_2_OR_NEWER
-            var hasLabel = HasLabel(property);
-            if (hasLabel && _bufferLabel != null)
-            {
-                _bufferLabel.RemoveFromHierarchy();
-                _bufferLabel = null;
-            }
+            ValidateLabel(property);
 #endif
 
             var newType = property.managedReferenceFullTypename;
@@ -127,11 +113,7 @@ namespace Better.Commons.EditorAddons.Drawers
                 finally
                 {
 #if !UNITY_2022_2_OR_NEWER
-                    if (!hasLabel && TryCreateBufferLabel(property, out var label))
-                    {
-                        _bufferLabel = label;
-                        Insert(0, _bufferLabel);
-                    }
+                    ValidateLabel(property);
 #endif
                 }
 
@@ -154,6 +136,31 @@ namespace Better.Commons.EditorAddons.Drawers
             property.Dispose();
         }
 
+        private void ValidateLabel(SerializedProperty property)
+        {
+            if (!IsLast())
+            {
+                if (_bufferLabel == null) return;
+                _bufferLabel.RemoveFromHierarchy();
+                _bufferLabel = null;
+
+                return;
+            }
+
+            var hasLabel = HasLabel();
+            switch (hasLabel)
+            {
+                case true when _bufferLabel != null:
+                    _bufferLabel.RemoveFromHierarchy();
+                    _bufferLabel = null;
+                    break;
+                case false when _bufferLabel == null && TryCreateBufferLabel(property, out var bufferLabel):
+                    _bufferLabel = bufferLabel;
+                    Insert(0, _bufferLabel);
+                    break;
+            }
+        }
+
         private void ReactToEditorChange()
         {
             UpdateSerializedObjectIfNeeded();
@@ -174,76 +181,21 @@ namespace Better.Commons.EditorAddons.Drawers
                 EditorApplication.delayCall += ClearRecentObjects;
         }
 
-        private bool HasLabel(SerializedProperty property)
+        private bool HasLabel()
         {
-            return ValidateBaseField(property);
+            return HasValidLabel<Toggle, bool>();
         }
 
-        private bool ValidateBaseField(SerializedProperty property)
+        private bool IsLast()
         {
-            var propertyType = property.propertyType;
-            switch (propertyType)
-            {
-                case SerializedPropertyType.Generic:
-                    return property.isArray && HasValidLabel<IntegerField>();
-                case SerializedPropertyType.Integer:
-                    return HasValidLabel<IntegerField>();
-                case SerializedPropertyType.Boolean:
-                    return HasValidLabel<Toggle>();
-                case SerializedPropertyType.Float:
-                    return HasValidLabel<FloatField>();
-                case SerializedPropertyType.String:
-                    return HasValidLabel<TextField>();
-                case SerializedPropertyType.Color:
-                    return HasValidLabel<ColorField>();
-                case SerializedPropertyType.ObjectReference:
-                    return HasValidLabel<ObjectField>();
-                case SerializedPropertyType.LayerMask:
-                    return HasValidLabel<LayerMaskField>();
-                case SerializedPropertyType.Enum:
-                    return HasValidLabel<PopupField<string>>();
-                case SerializedPropertyType.Vector2:
-                    return HasValidLabel<Vector2Field>();
-                case SerializedPropertyType.Vector3:
-                    return HasValidLabel<Vector3Field>();
-                case SerializedPropertyType.Vector4:
-                    return HasValidLabel<Vector4Field>();
-                case SerializedPropertyType.Rect:
-                    return HasValidLabel<RectField>();
-                case SerializedPropertyType.ArraySize:
-                    return HasValidLabel<IntegerField>();
-                case SerializedPropertyType.Character:
-                    return HasValidLabel<TextField>();
-                case SerializedPropertyType.AnimationCurve:
-                    return HasValidLabel<CurveField>();
-                case SerializedPropertyType.Bounds:
-                    return HasValidLabel<BoundsField>();
-                case SerializedPropertyType.Gradient:
-                    return HasValidLabel<GradientField>();
-                case SerializedPropertyType.Quaternion:
-                    return HasValidLabel<Vector4Field>();
-                case SerializedPropertyType.ExposedReference:
-                    return false;
-                case SerializedPropertyType.FixedBufferSize:
-                    return false;
-                case SerializedPropertyType.Vector2Int:
-                    return HasValidLabel<Vector2IntField>();
-                case SerializedPropertyType.Vector3Int:
-                    return HasValidLabel<Vector3IntField>();
-                case SerializedPropertyType.RectInt:
-                    return HasValidLabel<RectIntField>();
-                case SerializedPropertyType.BoundsInt:
-                    return HasValidLabel<BoundsIntField>();
-                case SerializedPropertyType.Hash128:
-                    return HasValidLabel<Hash128Field>();
-                default:
-                    return false;
-            }
+            var builder = this.Query().Descendents<SerializeReferenceField>().Build();
+            var query = builder.Last();
+            return query == this;
         }
 
-        private bool HasValidLabel<TValueType>()
+        private bool HasValidLabel<TBaseField, TValueType>() where TBaseField : BaseField<TValueType>
         {
-            if (TryGetBaseField<TValueType>(out var baseField))
+            if (TryGetBaseField<TBaseField, TValueType>(out var baseField))
             {
                 return baseField.labelElement != null;
             }
@@ -251,10 +203,16 @@ namespace Better.Commons.EditorAddons.Drawers
             return false;
         }
 
-        private bool TryGetBaseField<TValueType>(out BaseField<TValueType> baseField)
+        private bool TryGetBaseField<TBaseField, TValueType>(out BaseField<TValueType> baseField) where TBaseField : BaseField<TValueType>
         {
-            baseField = PropertyField.Query().Children<BaseField<TValueType>>().First();
-            var validParent = baseField.parent == PropertyField;
+            baseField = PropertyField.Query().Children<TBaseField>().First();
+
+            if (baseField == null)
+            {
+                return false;
+            }
+
+            var validParent = baseField.GetFirstAncestorOfType<PropertyField>() == PropertyField;
             if (!validParent)
             {
                 baseField = null;
@@ -333,6 +291,11 @@ namespace Better.Commons.EditorAddons.Drawers
             }
 
             return modifications;
+        }
+        
+        ~SerializeReferenceField()
+        {
+            _updateSchedule?.Pause();
         }
     }
 }
