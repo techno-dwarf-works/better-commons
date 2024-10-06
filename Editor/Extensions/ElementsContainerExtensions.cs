@@ -31,23 +31,24 @@ namespace Better.Commons.EditorAddons.Extensions
         public static void AddNotSupportedBox(this ElementsContainer self, Type fieldType, Type attributeType)
         {
             var helpBox = VisualElementUtility.NotSupportedBox(self.SerializedProperty, fieldType, attributeType);
-            if (self.TryGetByTag(VisualElementUtility.NotSupportedTag, out var element))
+            if (self.TryGetByTag(VisualElementUtility.HelpBoxTag, VisualElementUtility.NotSupportedTag, out var element))
             {
                 element.Add(helpBox);
             }
             else
             {
-                element = self.CreateElementFrom(helpBox);
+                element = self.CreateElementFrom(helpBox, VisualElementUtility.HelpBoxTag);
                 element.AddTag(VisualElementUtility.NotSupportedTag);
             }
         }
 
         public static SubPrewarmElement GetOrAddHelpBox(this ElementsContainer self, string message, object tag, HelpBoxMessageType messageType)
         {
-            if (!self.TryGetByTag(tag, out var element))
+            if (!self.TryGetByTag(VisualElementUtility.HelpBoxTag, tag, out var element))
             {
                 var helpBox = VisualElementUtility.HelpBox(message, messageType);
-                element = self.CreateElementFrom(helpBox);
+                element = self.CreateElementFrom(helpBox, VisualElementUtility.HelpBoxTag);
+                element.name = $"{tag}";
                 element.AddTag(tag);
             }
 

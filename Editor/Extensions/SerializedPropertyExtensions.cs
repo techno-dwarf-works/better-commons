@@ -377,10 +377,10 @@ namespace Better.Commons.EditorAddons.Extensions
             {
                 var container = containers[index];
                 if (container.GetType().IsEnumerable()) continue;
-                return container;
+                return container.ParentInstance;
             }
 
-            return containers.FirstOrDefault();
+            return containers.FirstOrDefault()?.ParentInstance;
         }
 
         public static List<PropertyParent> GetPropertyParents(this SerializedProperty self)
@@ -515,7 +515,7 @@ namespace Better.Commons.EditorAddons.Extensions
         private static void SetMemberValue(object container, string name, object value)
         {
             var type = container.GetType();
-            var members = type.GetMember(name, Defines.FieldsFlags);
+            var members = type.GetMembersByNameRecursive(name).ToArray();
             for (var i = 0; i < members.Length; ++i)
             {
                 if (members[i] is FieldInfo field)

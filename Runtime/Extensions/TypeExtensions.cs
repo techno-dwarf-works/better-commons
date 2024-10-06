@@ -122,5 +122,10 @@ namespace Better.Commons.Runtime.Extensions
         {
             return ReflectionUtility.GetMemberByNameRecursive(type, memberName);
         }
+        
+        public static IEnumerable<MemberInfo> GetMembersByNameRecursive(this Type type, string memberName)
+        {
+            return ReflectionUtility.GetMembersByNameRecursive(type, memberName);
+        }
     }
 }
