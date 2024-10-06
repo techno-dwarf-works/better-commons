@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Better.Commons.Runtime.Extensions;
 using Better.Commons.Runtime.Utility;
+using UnityEngine;
 
 namespace Better.Commons.EditorAddons.Utility
 {
@@ -44,7 +45,7 @@ namespace Better.Commons.EditorAddons.Utility
                 if (TryGetStaticInfo(selector, out var selectorInfo))
                 {
                     value = ReflectionUtility.GetValueFromStaticMember(selectorInfo.Type, selectorInfo.MemberName);
-                    return true;
+                    return value != null;
                 }
 
                 if (TryGetInstanceInfo(selector, out selectorInfo))
@@ -55,9 +56,90 @@ namespace Better.Commons.EditorAddons.Utility
             }
 
             var memberName = selector.Replace(Brackets, string.Empty);
-            value = ReflectionUtility.GetValueFromInstanceMember(instance, memberName);
+
+            if (!TryFindMethodParameters(instance, memberName, out var parameters))
+            {
+                value = null;
+                return false;
+            }
+
+            value = ReflectionUtility.GetValueFromInstanceMember(memberName, instance, parameters);
             return value != null;
         }
+
+        private static bool TryFindMethodParameters(object instance, string memberName, out object[] parameters)
+        {
+            var instanceType = instance.GetType();
+            var member = ReflectionUtility.GetMemberByNameRecursive(instanceType, memberName);
+
+            if (member is MethodInfo methodInfo)
+            {
+                return TryFindParameters(methodInfo.GetParameters(), instance, instanceType, out parameters);
+            }
+
+            parameters = Array.Empty<object>();
+            return true;
+        }
+
+        private static bool TryFindParameters(ParameterInfo[] parameterInfos, object instance, Type instanceType, out object[] parameters)
+        {
+            if (parameterInfos.Length > 1)
+            {
+                parameters = Array.Empty<object>();
+                return false;
+            }
+
+            if (parameterInfos.Length == 0)
+            {
+                parameters = Array.Empty<object>();
+                return true;
+            }
+
+            return TryFindSingleParameter(instance, instanceType, parameterInfos[0], out parameters);
+        }
+
+        private static bool TryFindSingleParameter(object instance, Type instanceType, ParameterInfo parameter, out object[] parameters)
+        {
+            if (parameter.IsOut)
+            {
+                parameters = Array.Empty<object>();
+                return false;
+            }
+
+            if (parameter.ParameterType == typeof(GameObject))
+            {
+                var foundGameObjectParameter = TryFindGameObjectParameter(instance, out parameters);
+                return foundGameObjectParameter;
+            }
+
+            if (parameter.ParameterType.IsAssignableFrom(instanceType))
+            {
+                parameters = new object[] { instance };
+                return true;
+            }
+            
+            parameters = Array.Empty<object>();
+            return false;
+        }
+
+        private static bool TryFindGameObjectParameter(object instance, out object[] parameters)
+        {
+            if (instance is GameObject)
+            {
+                parameters = new object[] { instance };
+                return true;
+            }
+
+            if (instance is Component component)
+            {
+                parameters = new object[] { component.gameObject };
+                return true;
+            }
+
+            parameters = Array.Empty<object>();
+            return false;
+        }
+
 
         private static bool TryGetStaticInfo(string selector, out SelectorInfo info)
         {

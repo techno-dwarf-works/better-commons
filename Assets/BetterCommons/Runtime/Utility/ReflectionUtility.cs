@@ -399,32 +399,34 @@ namespace Better.Commons.Runtime.Utility
                 return members.FirstOrDefault();
             }
 
-            // Return the original memberInfo if it's not a property of a generic type definition or doesn't need to be constructed
             return memberInfo;
         }
 
         public static MemberInfo GetMemberByNameRecursive(Type type, string memberName)
         {
+            return GetMembersByNameRecursive(type, memberName).FirstOrDefault(m => m.Name == memberName);
+        }
+        
+        public static IEnumerable<MemberInfo> GetMembersByNameRecursive(Type type, string memberName)
+        {
             if (type == null)
             {
                 DebugUtility.LogException<ArgumentNullException>(nameof(type));
-                return null;
+                return Enumerable.Empty<MemberInfo>();
             }
 
             if (string.IsNullOrEmpty(memberName))
             {
                 DebugUtility.LogException<ArgumentException>(nameof(memberName));
-                return null;
+                return Enumerable.Empty<MemberInfo>();;
             }
 
             var allMembers = GetMembersRecursive(type);
 
-            // Use LINQ to find the member by name. This assumes you want the first match if there are multiple members with the same name (overloads).
-            // If you expect overloads and want to handle them differently, you might need a more complex approach.
-            return allMembers.FirstOrDefault(m => m.Name == memberName);
+            return allMembers.Where(m => m.Name == memberName);
         }
-
-        public static object GetValueFromInstanceMember(object instance, string memberName)
+        
+        public static object GetValueFromInstanceMember(string memberName, object instance, object[] parameters)
         {
             if (instance == null)
             {
@@ -440,7 +442,8 @@ namespace Better.Commons.Runtime.Utility
 
             var type = instance.GetType();
             var member = GetMemberByNameRecursive(type, memberName);
-            if (TryGetValue(member, instance, out var value))
+            
+            if (TryGetValue(member, instance, parameters, out var value))
             {
                 return value;
             }
@@ -463,15 +466,15 @@ namespace Better.Commons.Runtime.Utility
             }
 
             var member = GetMemberByNameRecursive(type, memberName);
-            if (TryGetValue(member, null, out var value))
+            if (TryGetValue(member, null, Array.Empty<object>(), out var value))
             {
                 return value;
             }
 
             return null;
         }
-
-        private static bool TryGetValue(MemberInfo memberInfo, object instance, out object value)
+        
+        private static bool TryGetValue(MemberInfo memberInfo, object instance, object[] parameters, out object value)
         {
             if (memberInfo is PropertyInfo propertyInfo)
             {
@@ -487,7 +490,7 @@ namespace Better.Commons.Runtime.Utility
 
             if (memberInfo is MethodInfo methodInfo)
             {
-                value = methodInfo.Invoke(instance, Array.Empty<object>());
+                value = methodInfo.Invoke(instance, parameters);
                 return true;
             }
 

@@ -20,7 +20,7 @@ namespace Better.Commons.EditorAddons.Comparers
 
         public int GetHashCode(SerializedProperty obj)
         {
-            return !obj.IsDisposed() && obj.propertyPath != null ? obj.propertyPath.GetHashCode() : 0;
+            return obj.Verify() && !obj.IsDisposed() && obj.propertyPath != null ? obj.propertyPath.GetHashCode() : 0;
         }
     }
 }

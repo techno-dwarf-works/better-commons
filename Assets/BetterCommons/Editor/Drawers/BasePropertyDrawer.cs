@@ -18,6 +18,7 @@ namespace Better.Commons.EditorAddons.Drawers
         protected TAttribute Attribute { get; private set; }
 
         protected HandlerCollection<THandler> Handlers { get; private set; }
+        protected ElementsContainer Container { get; private set; }
         protected TypeHandlerBinder<THandler> TypeHandlersBinder { get; private set; }
 
         protected BasePropertyDrawer()
@@ -53,9 +54,11 @@ namespace Better.Commons.EditorAddons.Drawers
             var attributeType = Attribute.GetType();
             var fieldType = GetFieldOrElementType();
 
-            if (Handlers.TryGetValue(property, out var value))
+            var cached = new CachedSerializedProperty(property);
+            Handlers.Revalidate();
+            
+            if (Handlers.TryGetValue(cached, out var value))
             {
-                ValidationUtility.ValidateCachedProperties(Handlers);
                 return value.Handler;
             }
 
@@ -66,25 +69,31 @@ namespace Better.Commons.EditorAddons.Drawers
             }
 
             var collectionValue = new CollectionValue<THandler>(handler, fieldType);
-            Handlers.Add(property, collectionValue);
+            Handlers.Add(cached, collectionValue);
 
             return handler;
         }
 
         public sealed override VisualElement CreatePropertyGUI(SerializedProperty property)
         {
-            var container = new ElementsContainer(property);
+            if (Container != null)
+            {
+                ContainerReleased(Container);
+                Container = null;
+            }
+            
+            Container = new ElementsContainer(property);
             FieldInfo = fieldInfo;
             Attribute = (TAttribute)attribute;
             Handlers = new HandlerCollection<THandler>();
             TypeHandlersBinder = HandlerBinderRegistry.GetMap<THandler>();
 
-            PopulateContainer(container);
-            container.Use();
+            PopulateContainer(Container);
+            Container.Use();
             
             var subState = StyleDefinition.CombineSubState(typeof(TAttribute).Name, GetType().Name);
-            container.RootElement.AddToClassList(subState);
-            return container.RootElement;
+            Container.RootElement.AddToClassList(subState);
+            return Container.RootElement;
         }
 
         protected abstract void PopulateContainer(ElementsContainer container);
@@ -111,9 +120,14 @@ namespace Better.Commons.EditorAddons.Drawers
             return fieldType;
         }
 
-        protected virtual void Deconstruct()
+        private void Deconstruct()
         {
             Handlers?.Deconstruct();
+            ContainerReleased(Container);
+        }
+        
+        protected virtual void ContainerReleased(ElementsContainer container)
+        {
         }
     }
 }
