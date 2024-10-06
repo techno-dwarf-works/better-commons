@@ -8,6 +8,7 @@ namespace Better.Commons.EditorAddons.Utility
         public const string BetterPropertyClass = "better-property-field";
         private static float _spaceHeight = 6f;
         public static readonly StyleLength SingleLineHeight = new StyleLength(new Length(18, LengthUnit.Pixel));
+        public static readonly StyleLength ButtonHeight = new StyleLength(new Length(21, LengthUnit.Pixel));
         public static readonly StyleLength IndentLevelPadding = new StyleLength(new Length(15, LengthUnit.Pixel));
         public static readonly StyleFloat OneStyleFloat = new StyleFloat(1f);
         public static readonly StyleFloat ZeroStyleFloat = new StyleFloat(0f);

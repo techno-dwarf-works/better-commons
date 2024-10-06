@@ -19,7 +19,8 @@ namespace Better.Commons.EditorAddons.Utility
         private static readonly HelpBox EmptyHelpBox = new HelpBox();
 
         public const string NotSupportedTag = nameof(NotSupportedTag);
-
+        public const string HelpBoxTag = nameof(HelpBox);
+        
         private static string NotSupportedMessage(string fieldName, Type fieldType, Type attributeType)
         {
             return $"Field {fieldName.FormatBold()} of type {fieldType.Name.FormatBold()} not supported for {attributeType.Name.FormatBold()}";

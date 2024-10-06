@@ -18,10 +18,13 @@ namespace Better.Commons.EditorAddons.Drawers.Container
         public SerializedObject SerializedObject => SerializedProperty.serializedObject;
         public SerializedProperty SerializedProperty { get; }
         public LabelContainer LabelContainer { get; }
-        public List<SubPrewarmElement> PrewarmChildren { get; }
+        
+        public List<ContainerPrewarmElement> ContainersPrewarmChildren { get; }
 
         public event Action<ElementsContainer> SerializedObjectChanged;
         public event Action<ElementsContainer> SerializedPropertyChanged;
+
+        public const string Tag = nameof(ElementsContainer);
 
         public ElementsContainer(SerializedProperty serializedProperty)
         {
@@ -34,7 +37,7 @@ namespace Better.Commons.EditorAddons.Drawers.Container
             RootElement.TrackSerializedObjectValue(SerializedObject, OnSerializedObjectChanged);
 
             LabelContainer = new LabelContainer(serializedProperty.displayName);
-            PrewarmChildren = new List<SubPrewarmElement>();
+            ContainersPrewarmChildren = new List<ContainerPrewarmElement>();
 
             CoreElement = new PrewarmElement();
             PropertyField propertyField;
@@ -50,10 +53,11 @@ namespace Better.Commons.EditorAddons.Drawers.Container
                 CoreElement.Add(propertyField);
             }
 
-            RootElement.Add(CoreElement);
+            CreateElementFrom(CoreElement);
+
             propertyField.name = $"{nameof(ElementsContainer)}_{SerializedProperty.propertyPath}";
             propertyField.RegisterCallback<SerializedPropertyChangeEvent>(OnSerializedPropertyChanged);
-            propertyField.RegisterCallback<GeometryChangedEvent>(ScheduleUpdateGeometry);
+            propertyField.RegisterCallback<AttachToPanelEvent>(ScheduleAttachToPanel);
             propertyField.style.FlexGrow(StyleDefinition.OneStyleFloat);
         }
 
@@ -64,33 +68,41 @@ namespace Better.Commons.EditorAddons.Drawers.Container
             return rootElement;
         }
 
-        public SubPrewarmElement CreateElementFrom(VisualElement element)
+        public SubPrewarmElement CreateElementFrom(VisualElement element, string tag = Tag)
         {
+            if(!TryGetByTag(tag, out var containerPrewarmElement))
+            {
+                containerPrewarmElement = new ContainerPrewarmElement();
+                containerPrewarmElement.AddTag(tag);
+                ContainersPrewarmChildren.Add(containerPrewarmElement);
+                RootElement.Add(containerPrewarmElement);
+            }
+            
             var item = new SubPrewarmElement();
             item.Add(element);
-            PrewarmChildren.Add(item);
-            RootElement.Add(item);
+            containerPrewarmElement.Add(item);
             return item;
         }
-
-        public SubPrewarmElement GetByTag(object tag)
+        
+        public bool TryGetByTag(object containerTag, object subTag, out SubPrewarmElement element)
         {
-            if (TryGetByTag(tag, out var fieldVisualElement))
+            if (!TryGetByTag(containerTag, out var bufferElement))
             {
-                return fieldVisualElement;
+                element = null;
+                return false;
             }
-
-            throw new KeyNotFoundException($"Element with tag: {tag} not found");
+            
+            return bufferElement.TryGetByTag(subTag, out element);
         }
 
-        public IEnumerable<SubPrewarmElement> GetByTags(IEnumerable<object> tag)
+        public IEnumerable<ContainerPrewarmElement> GetByTags(IEnumerable<object> tag)
         {
-            return PrewarmChildren.Where(x => x.ContainsAnyTags(tag));
+            return ContainersPrewarmChildren.Where(x => x.ContainsAnyTags(tag));
         }
 
-        public bool TryGetByTag(object tag, out SubPrewarmElement element)
+        public bool TryGetByTag(object tag, out ContainerPrewarmElement element)
         {
-            element = PrewarmChildren.FirstOrDefault(x => x.ContainsTag(tag));
+            element = ContainersPrewarmChildren.FirstOrDefault(x => x.ContainsTag(tag));
             return element != null;
         }
 
@@ -109,14 +121,14 @@ namespace Better.Commons.EditorAddons.Drawers.Container
             SerializedPropertyChanged?.Invoke(this);
         }
 
-        private void ScheduleUpdateGeometry(GeometryChangedEvent changedEvent)
+        private void ScheduleAttachToPanel(AttachToPanelEvent changedEvent)
         {
             if (changedEvent.target is not PropertyField element) return;
 
-            element.schedule.Execute(() => OnGeometryChanged(element));
+            element.schedule.Execute(() => OnAttachToPanel(element));
         }
 
-        private void OnGeometryChanged(VisualElement element)
+        private void OnAttachToPanel(VisualElement element)
         {
             var propertyPath = SerializedProperty.propertyPath;
             var propertyFields = element.Query<PropertyField>().Where(field => field.bindingPath.CompareOrdinal(propertyPath)).Build();

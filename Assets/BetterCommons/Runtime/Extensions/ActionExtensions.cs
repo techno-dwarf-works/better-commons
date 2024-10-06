@@ -7,7 +7,7 @@ namespace Better.Commons.Runtime.Extensions
     {
         private const bool DefaultLogException = true;
 
-        #region SafeInvoke`16
+        #region TryInvoke`16
 
         public static bool TryInvoke(this Action self, bool logException = DefaultLogException)
         {

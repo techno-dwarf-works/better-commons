@@ -42,9 +42,36 @@ namespace Better.Commons.Runtime.Extensions
             return self;
         }
 
+        public static IStyle BorderTopColor(this IStyle self, StyleColor borderTopColor)
+        {
+            self.borderTopColor = borderTopColor;
+            return self;
+        }
+
         public static IStyle BorderBottomColor(this IStyle self, StyleColor borderBottomColor)
         {
             self.borderBottomColor = borderBottomColor;
+            return self;
+        }
+
+        public static IStyle BorderLeftColor(this IStyle self, StyleColor borderLeftColor)
+        {
+            self.borderLeftColor = borderLeftColor;
+            return self;
+        }
+
+        public static IStyle BorderRightColor(this IStyle self, StyleColor borderRightColor)
+        {
+            self.borderRightColor = borderRightColor;
+            return self;
+        }
+        
+        public static IStyle BorderColor(this IStyle self, StyleColor borderColor)
+        {
+            self.borderTopColor = borderColor;
+            self.borderLeftColor = borderColor;
+            self.borderRightColor = borderColor;
+            self.borderBottomColor = borderColor;
             return self;
         }
 
@@ -75,33 +102,15 @@ namespace Better.Commons.Runtime.Extensions
             return self;
         }
 
-        public static IStyle BorderLeftColor(this IStyle self, StyleColor borderLeftColor)
-        {
-            self.borderLeftColor = borderLeftColor;
-            return self;
-        }
-
         public static IStyle BorderLeftWidth(this IStyle self, StyleFloat borderLeftWidth)
         {
             self.borderLeftWidth = borderLeftWidth;
             return self;
         }
 
-        public static IStyle BorderRightColor(this IStyle self, StyleColor borderRightColor)
-        {
-            self.borderRightColor = borderRightColor;
-            return self;
-        }
-
         public static IStyle BorderRightWidth(this IStyle self, StyleFloat borderRightWidth)
         {
             self.borderRightWidth = borderRightWidth;
-            return self;
-        }
-
-        public static IStyle BorderTopColor(this IStyle self, StyleColor borderTopColor)
-        {
-            self.borderTopColor = borderTopColor;
             return self;
         }
 
