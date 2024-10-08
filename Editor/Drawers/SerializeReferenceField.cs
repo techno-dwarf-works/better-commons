@@ -135,7 +135,8 @@ namespace Better.Commons.EditorAddons.Drawers
 
             property.Dispose();
         }
-
+        
+#if !UNITY_2022_2_OR_NEWER
         private void ValidateLabel(SerializedProperty property)
         {
             if (!IsLast())
@@ -160,7 +161,7 @@ namespace Better.Commons.EditorAddons.Drawers
                     break;
             }
         }
-
+#endif
         private void ReactToEditorChange()
         {
             UpdateSerializedObjectIfNeeded();
