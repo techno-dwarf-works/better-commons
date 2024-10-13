@@ -276,7 +276,6 @@ namespace Better.Commons.EditorAddons.Extensions
                 return false;
             }
 
-
             try
             {
                 if (VerifyMethod != null)
