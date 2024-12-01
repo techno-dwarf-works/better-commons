@@ -60,8 +60,7 @@ namespace Better.Commons.EditorAddons.CustomEditors
                 return att.EditorFor == targetType;
             }
 
-            return typeof(ExtendedEditor).GetAllInheritedTypesWithoutUnityObject()
-                .Select(type => (type, type.GetCustomAttribute<MultiEditorAttribute>()))
+            return typeof(ExtendedEditor).GetAllInheritedTypesWithoutUnityObject().Select(type => (type, type.GetCustomAttribute<MultiEditorAttribute>()))
                 .Where(WherePredicate).OrderBy(x => x.Item2.Order).ToArray();
         }
 
