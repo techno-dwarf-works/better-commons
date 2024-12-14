@@ -91,6 +91,11 @@ namespace Better.Commons.EditorAddons.Helpers
         private StyleProperty<StyleFloat> _unitySliceScale;
 #endif
 
+#if UNITY_6000_0_OR_NEWER
+        private StyleProperty<StyleEnum<TextGeneratorType>> _unityTextGenerator;
+        private StyleProperty<StyleEnum<EditorTextRenderingMode>> _unityEditorTextRenderingMode;
+#endif
+
         private IStyle _cachedStyle;
 
         public StyleEnum<Align> alignContent
@@ -1632,7 +1637,6 @@ namespace Better.Commons.EditorAddons.Helpers
                 _unityTextAlign.Value = value;
             }
         }
-
         public StyleColor unityTextOutlineColor
         {
             get
@@ -1895,6 +1899,52 @@ namespace Better.Commons.EditorAddons.Helpers
                 }
 
                 _unitySliceScale.Value = value;
+            }
+        }
+#endif
+
+#if UNITY_6000_0_OR_NEWER
+        public StyleEnum<TextGeneratorType> unityTextGenerator
+        {
+            get
+            {
+                if (_unitySliceScale.HasValue || _cachedStyle == null)
+                {
+                    return _unityTextGenerator.Value;
+                }
+
+                return _cachedStyle.unityTextGenerator;
+            }
+            set
+            {
+                if (_cachedStyle != null)
+                {
+                    _cachedStyle.unityTextGenerator = value;
+                }
+
+                _unityTextGenerator.Value = value;
+            }
+        }
+        
+        public StyleEnum<EditorTextRenderingMode> unityEditorTextRenderingMode
+        {
+            get
+            {
+                if (_unitySliceScale.HasValue || _cachedStyle == null)
+                {
+                    return _unityEditorTextRenderingMode.Value;
+                }
+
+                return _cachedStyle.unityEditorTextRenderingMode;
+            }
+            set
+            {
+                if (_cachedStyle != null)
+                {
+                    _cachedStyle.unityEditorTextRenderingMode = value;
+                }
+
+                _unityEditorTextRenderingMode.Value = value;
             }
         }
 #endif
@@ -2322,6 +2372,18 @@ namespace Better.Commons.EditorAddons.Helpers
             if (_unitySliceScale.HasValue)
             {
                 _cachedStyle.unitySliceScale = _unitySliceScale.Value;
+            }
+#endif
+
+#if UNITY_6000_0_OR_NEWER
+            if (_unityTextGenerator.HasValue)
+            {
+                _cachedStyle.unityTextGenerator = _unityTextGenerator.Value;
+            }
+
+            if (_unityEditorTextRenderingMode.HasValue)
+            {
+                _cachedStyle.unityEditorTextRenderingMode = _unityEditorTextRenderingMode.Value;
             }
 #endif
         }
