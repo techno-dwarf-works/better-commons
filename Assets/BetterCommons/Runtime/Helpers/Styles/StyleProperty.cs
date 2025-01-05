@@ -1,4 +1,4 @@
-﻿namespace Better.Commons.EditorAddons.Helpers
+﻿namespace Better.Commons.Runtime.Helpers.Styles
 {
     public struct StyleProperty<T>
     {

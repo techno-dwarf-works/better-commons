@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Better.Commons.EditorAddons.Drawers
+namespace Better.Commons.EditorAddons.Drawers.HandlerBinding
 {
     public class BindingInfo
     {

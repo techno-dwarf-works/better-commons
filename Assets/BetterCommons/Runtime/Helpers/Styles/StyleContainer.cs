@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Better.Commons.EditorAddons.Helpers
+namespace Better.Commons.Runtime.Helpers.Styles
 {
     public class StyleContainer : IStyle
     {
