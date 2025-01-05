@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using Better.Commons.EditorAddons.Drawers.Handlers;
 
-namespace Better.Commons.EditorAddons.Drawers.Handlers
+namespace Better.Commons.EditorAddons.Drawers.HandlerBinding.Filters
 {
     public class AttributeHandlersFilter : FieldHandlersFilter
     {

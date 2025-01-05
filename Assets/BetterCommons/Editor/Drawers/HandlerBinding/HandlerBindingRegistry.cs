@@ -4,7 +4,7 @@ using System.Reflection;
 using Better.Commons.EditorAddons.Drawers.Handlers;
 using Better.Commons.Runtime.Extensions;
 
-namespace Better.Commons.EditorAddons.Drawers
+namespace Better.Commons.EditorAddons.Drawers.HandlerBinding
 {
     public static class BindingRegistry
     {

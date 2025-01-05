@@ -18,7 +18,6 @@ namespace Better.Commons.EditorAddons.Drawers.Container
         public SerializedObject SerializedObject => SerializedProperty.serializedObject;
         public SerializedProperty SerializedProperty { get; }
         public LabelContainer LabelContainer { get; }
-        
         public List<ContainerPrewarmElement> ContainersPrewarmChildren { get; }
 
         public event Action<ElementsContainer> SerializedObjectChanged;
