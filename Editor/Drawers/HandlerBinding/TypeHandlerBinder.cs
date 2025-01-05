@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Better.Commons.EditorAddons.Drawers.HandlerBinding.Filters;
+using Better.Commons.EditorAddons.Drawers.Handlers;
 using Better.Commons.Runtime.Utility;
 
-namespace Better.Commons.EditorAddons.Drawers.Handlers
+namespace Better.Commons.EditorAddons.Drawers.HandlerBinding
 {
     public abstract class TypeHandlerBinder
     {

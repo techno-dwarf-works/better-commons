@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace Better.Commons.EditorAddons.Drawers.Handlers
+namespace Better.Commons.EditorAddons.Drawers.HandlerBinding
 {
     public class Binding
     {

@@ -1,10 +1,114 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Better.Commons.Runtime.Helpers.Styles;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Better.Commons.Runtime.Extensions
 {
     public static class StyleExtensions
     {
+        public static void CopyFrom(this IStyle self, IStyle source)
+        {
+            self.alignContent = source.alignContent;
+            self.alignItems = source.alignItems;
+            self.alignSelf = source.alignSelf;
+            self.backgroundColor = source.backgroundColor;
+            self.backgroundImage = source.backgroundImage;
+            self.borderBottomColor = source.borderBottomColor;
+            self.borderBottomLeftRadius = source.borderBottomLeftRadius;
+            self.borderBottomRightRadius = source.borderBottomRightRadius;
+            self.borderBottomWidth = source.borderBottomWidth;
+            self.borderLeftColor = source.borderLeftColor;
+            self.borderLeftWidth = source.borderLeftWidth;
+            self.borderRightColor = source.borderRightColor;
+            self.borderRightWidth = source.borderRightWidth;
+            self.borderTopColor = source.borderTopColor;
+            self.borderTopLeftRadius = source.borderTopLeftRadius;
+            self.borderTopRightRadius = source.borderTopRightRadius;
+            self.borderTopWidth = source.borderTopWidth;
+            self.bottom = source.bottom;
+            self.color = source.color;
+            self.cursor = source.cursor;
+            self.display = source.display;
+            self.flexBasis = source.flexBasis;
+            self.flexDirection = source.flexDirection;
+            self.flexGrow = source.flexGrow;
+            self.flexShrink = source.flexShrink;
+            self.flexWrap = source.flexWrap;
+            self.fontSize = source.fontSize;
+            self.height = source.height;
+            self.justifyContent = source.justifyContent;
+            self.left = source.left;
+            self.letterSpacing = source.letterSpacing;
+            self.marginBottom = source.marginBottom;
+            self.marginLeft = source.marginLeft;
+            self.marginRight = source.marginRight;
+            self.marginTop = source.marginTop;
+            self.maxHeight = source.maxHeight;
+            self.maxWidth = source.maxWidth;
+            self.minHeight = source.minHeight;
+            self.minWidth = source.minWidth;
+            self.opacity = source.opacity;
+            self.overflow = source.overflow;
+            self.paddingBottom = source.paddingBottom;
+            self.paddingLeft = source.paddingLeft;
+            self.paddingRight = source.paddingRight;
+            self.paddingTop = source.paddingTop;
+            self.position = source.position;
+            self.right = source.right;
+            self.rotate = source.rotate;
+            self.scale = source.scale;
+            self.textOverflow = source.textOverflow;
+            self.textShadow = source.textShadow;
+            self.top = source.top;
+            self.transformOrigin = source.transformOrigin;
+            self.transitionDelay = source.transitionDelay;
+            self.transitionDuration = source.transitionDuration;
+            self.transitionProperty = source.transitionProperty;
+            self.transitionTimingFunction = source.transitionTimingFunction;
+            self.translate = source.translate;
+            self.unityBackgroundImageTintColor = source.unityBackgroundImageTintColor;
+            self.unityBackgroundScaleMode = source.unityBackgroundScaleMode;
+            self.unityFont = source.unityFont;
+            self.unityFontDefinition = source.unityFontDefinition;
+            self.unityFontStyleAndWeight = source.unityFontStyleAndWeight;
+            self.unityOverflowClipBox = source.unityOverflowClipBox;
+            self.unityParagraphSpacing = source.unityParagraphSpacing;
+            self.unitySliceBottom = source.unitySliceBottom;
+            self.unitySliceLeft = source.unitySliceLeft;
+            self.unitySliceRight = source.unitySliceRight;
+            self.unitySliceTop = source.unitySliceTop;
+            self.unityTextAlign = source.unityTextAlign;
+            self.unityTextOutlineColor = source.unityTextOutlineColor;
+            self.unityTextOutlineWidth = source.unityTextOutlineWidth;
+            self.unityTextOverflowPosition = source.unityTextOverflowPosition;
+            self.visibility = source.visibility;
+            self.whiteSpace = source.whiteSpace;
+            self.width = source.width;
+            self.wordSpacing = source.wordSpacing;
+
+#if UNITY_2022_2_OR_NEWER
+            self.backgroundPositionX = source.backgroundPositionX;
+            self.backgroundPositionY = source.backgroundPositionY;
+            self.backgroundRepeat = source.backgroundRepeat;
+            self.backgroundSize = source.backgroundSize;
+            self.unitySliceScale = source.unitySliceScale;
+#endif
+
+#if UNITY_6000_0_OR_NEWER
+            self.unityTextGenerator = source.unityTextGenerator;
+            self.unityEditorTextRenderingMode = source.unityEditorTextRenderingMode;
+#endif
+        }
+
+        public static IStyle AsGroup(this IEnumerable<IStyle> self)
+        {
+            var styles = self.ToList();
+            var group = new StyleGroup(styles);
+            return group;
+        }
+
         public static IStyle SetVisible(this IStyle self, bool visible)
         {
             var visibility = visible ? UnityEngine.UIElements.Visibility.Visible : UnityEngine.UIElements.Visibility.Hidden;
@@ -65,7 +169,7 @@ namespace Better.Commons.Runtime.Extensions
             self.borderRightColor = borderRightColor;
             return self;
         }
-        
+
         public static IStyle BorderColor(this IStyle self, StyleColor borderColor)
         {
             self.borderTopColor = borderColor;
@@ -92,7 +196,7 @@ namespace Better.Commons.Runtime.Extensions
             self.borderBottomWidth = borderBottomWidth;
             return self;
         }
-        
+
         public static IStyle BorderWidth(this IStyle self, StyleFloat width)
         {
             self.borderTopWidth = width;
@@ -245,7 +349,7 @@ namespace Better.Commons.Runtime.Extensions
             self.marginTop = marginTop;
             return self;
         }
-        
+
         public static IStyle Margin(this IStyle self, StyleLength marginTop)
         {
             self.marginTop = marginTop;
@@ -314,13 +418,13 @@ namespace Better.Commons.Runtime.Extensions
             self.paddingTop = paddingTop;
             return self;
         }
-        
-        public static IStyle Padding(this IStyle self, StyleLength marginTop)
+
+        public static IStyle Padding(this IStyle self, StyleLength padding)
         {
-            self.paddingTop = marginTop;
-            self.paddingRight = marginTop;
-            self.paddingBottom = marginTop;
-            self.paddingLeft = marginTop;
+            self.paddingTop = padding;
+            self.paddingRight = padding;
+            self.paddingBottom = padding;
+            self.paddingLeft = padding;
             return self;
         }
 

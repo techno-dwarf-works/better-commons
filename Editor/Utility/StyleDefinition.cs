@@ -13,6 +13,7 @@ namespace Better.Commons.EditorAddons.Utility
         public static readonly StyleFloat OneStyleFloat = new StyleFloat(1f);
         public static readonly StyleFloat ZeroStyleFloat = new StyleFloat(0f);
         public static readonly StyleLength OneStyleLength = new StyleLength(1f);
+        public static readonly StyleLength ZeroStyleLength = new StyleLength(0f);
         public static readonly StyleLength LabelWidthStyle = new StyleLength(new Length(45, LengthUnit.Percent));
 
         public const string PropertyFieldClass = "unity-property-field";

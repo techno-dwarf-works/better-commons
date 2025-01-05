@@ -11,7 +11,7 @@ namespace Better.Commons.Runtime.DataStructures.SerializedTypes
     public class SerializedType : ISerializationCallbackReceiver, IEquatable<SerializedType>
     {
         [FormerlySerializedAs("fullQualifiedName")]
-        [SerializeField] private protected string _fullQualifiedName; // The full name of the type, used for serialization.
+        [SerializeField] private string _fullQualifiedName; // The full name of the type, used for serialization.
 
         private Type _type; // The actual Type object, not serialized.
 
