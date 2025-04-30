@@ -96,6 +96,10 @@ namespace Better.Commons.Runtime.Helpers.Styles
         private StyleProperty<StyleEnum<EditorTextRenderingMode>> _unityEditorTextRenderingMode;
 #endif
 
+#if UNITY_6000_1_OR_NEWER
+        private StyleProperty<StyleEnum<SliceType>> _unitySliceType;
+#endif
+
         private IStyle _cachedStyle;
 
         public StyleEnum<Align> alignContent
@@ -1637,6 +1641,7 @@ namespace Better.Commons.Runtime.Helpers.Styles
                 _unityTextAlign.Value = value;
             }
         }
+
         public StyleColor unityTextOutlineColor
         {
             get
@@ -1925,7 +1930,7 @@ namespace Better.Commons.Runtime.Helpers.Styles
                 _unityTextGenerator.Value = value;
             }
         }
-        
+
         public StyleEnum<EditorTextRenderingMode> unityEditorTextRenderingMode
         {
             get
@@ -1945,6 +1950,31 @@ namespace Better.Commons.Runtime.Helpers.Styles
                 }
 
                 _unityEditorTextRenderingMode.Value = value;
+            }
+        }
+#endif
+
+
+#if UNITY_6000_1_OR_NEWER
+        public StyleEnum<SliceType> unitySliceType
+        {
+            get
+            {
+                if (_unitySliceTop.HasValue || _cachedStyle == null)
+                {
+                    return _unitySliceType.Value;
+                }
+
+                return _cachedStyle.unitySliceType;
+            }
+            set
+            {
+                if (_cachedStyle != null)
+                {
+                    _cachedStyle.unitySliceType = value;
+                }
+
+                _unitySliceType.Value = value;
             }
         }
 #endif
@@ -2384,6 +2414,13 @@ namespace Better.Commons.Runtime.Helpers.Styles
             if (_unityEditorTextRenderingMode.HasValue)
             {
                 _cachedStyle.unityEditorTextRenderingMode = _unityEditorTextRenderingMode.Value;
+            }
+#endif
+            
+#if UNITY_6000_1_OR_NEWER
+            if (_unitySliceType.HasValue)
+            {
+                _cachedStyle.unitySliceType = _unitySliceType.Value;
             }
 #endif
         }
