@@ -524,6 +524,14 @@ namespace Better.Commons.Runtime.Helpers.Styles
             set { ApplyProperty(_styles, value, (style, newValue) => style.unityEditorTextRenderingMode = newValue); }
         }
 #endif
+        
+#if UNITY_6000_1_OR_NEWER
+        public StyleEnum<SliceType> unitySliceType
+        {
+            get { return _mainStyle.unitySliceType; }
+            set { ApplyProperty(_styles, value, (style, newValue) => style.unitySliceType = newValue); }
+        }
+#endif
 
         public StyleGroup(List<IStyle> styles) : this(styles.FirstOrDefault(), styles)
         {
