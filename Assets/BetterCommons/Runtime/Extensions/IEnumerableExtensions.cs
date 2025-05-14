@@ -9,6 +9,23 @@ namespace Better.Commons.Runtime.Extensions
 {
     public static class IEnumerableExtensions
     {
+        public static T ElementAt<T>(this IEnumerable<T> self, int index, bool onlyRange)
+        {
+            if (self == null)
+            {
+                DebugUtility.LogException<ArgumentNullException>(nameof(self));
+                return default;
+            }
+
+            if (onlyRange)
+            {
+                var maxIndex = self.Count();
+                index = Math.Clamp(index, 0, maxIndex);
+            }
+
+            return self.ElementAt(index);
+        }
+
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> self)
         {
             if (self == null)
