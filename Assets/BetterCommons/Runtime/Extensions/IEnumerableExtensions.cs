@@ -26,6 +26,23 @@ namespace Better.Commons.Runtime.Extensions
             return self.ElementAt(index);
         }
 
+        public static T ElementAtOrDefault<T>(this IEnumerable<T> self, int index, bool onlyRange)
+        {
+            if (self == null)
+            {
+                DebugUtility.LogException<ArgumentNullException>(nameof(self));
+                return default;
+            }
+
+            if (onlyRange)
+            {
+                var maxIndex = self.Count();
+                index = Math.Clamp(index, 0, maxIndex);
+            }
+
+            return self.ElementAtOrDefault(index);
+        }
+
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> self)
         {
             if (self == null)
