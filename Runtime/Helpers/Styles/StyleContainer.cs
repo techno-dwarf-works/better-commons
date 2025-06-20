@@ -94,9 +94,6 @@ namespace Better.Commons.Runtime.Helpers.Styles
 #if UNITY_6000_0_OR_NEWER
         private StyleProperty<StyleEnum<TextGeneratorType>> _unityTextGenerator;
         private StyleProperty<StyleEnum<EditorTextRenderingMode>> _unityEditorTextRenderingMode;
-#endif
-
-#if UNITY_6000_1_OR_NEWER
         private StyleProperty<StyleEnum<SliceType>> _unitySliceType;
 #endif
 
@@ -1952,10 +1949,7 @@ namespace Better.Commons.Runtime.Helpers.Styles
                 _unityEditorTextRenderingMode.Value = value;
             }
         }
-#endif
 
-
-#if UNITY_6000_1_OR_NEWER
         public StyleEnum<SliceType> unitySliceType
         {
             get
@@ -2415,9 +2409,7 @@ namespace Better.Commons.Runtime.Helpers.Styles
             {
                 _cachedStyle.unityEditorTextRenderingMode = _unityEditorTextRenderingMode.Value;
             }
-#endif
-            
-#if UNITY_6000_1_OR_NEWER
+
             if (_unitySliceType.HasValue)
             {
                 _cachedStyle.unitySliceType = _unitySliceType.Value;
