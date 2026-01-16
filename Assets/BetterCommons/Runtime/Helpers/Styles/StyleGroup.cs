@@ -531,6 +531,34 @@ namespace Better.Commons.Runtime.Helpers.Styles
         }
 #endif
 
+#if UNITY_6000_2_OR_NEWER
+        public StyleTextAutoSize unityTextAutoSize
+        {
+            get { return _mainStyle.unityTextAutoSize; }
+            set { ApplyProperty(_styles, value, (style, newValue) => style.unityTextAutoSize = newValue); }
+        }
+#endif
+        
+#if UNITY_6000_3_OR_NEWER
+        public StyleMaterialDefinition unityMaterial
+        {
+            get { return _mainStyle.unityMaterial; }
+            set { ApplyProperty(_styles, value, (style, newValue) => style.unityMaterial = newValue); }
+        }
+
+        public StyleRatio aspectRatio
+        {
+            get { return _mainStyle.aspectRatio; }
+            set { ApplyProperty(_styles, value, (style, newValue) => style.aspectRatio = newValue); }
+        }
+
+        public StyleList<FilterFunction> filter
+        {
+            get { return _mainStyle.filter; }
+            set { ApplyProperty(_styles, value, (style, newValue) => style.filter = newValue); }
+        }
+#endif
+
         public StyleGroup(List<IStyle> styles) : this(styles.FirstOrDefault(), styles)
         {
         }
