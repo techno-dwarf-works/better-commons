@@ -2073,7 +2073,7 @@ namespace Better.Commons.Runtime.Helpers.Styles
 		{
 			get
 			{
-				if (_unityMaterial.HasValue
+				if (_unityTextAutoSize.HasValue
 					|| _cachedStyle == null)
 				{
 					return _unityTextAutoSize.Value;
@@ -2121,7 +2121,7 @@ namespace Better.Commons.Runtime.Helpers.Styles
 		{
 			get
 			{
-				if (_unityMaterial.HasValue
+				if (_aspectRatio.HasValue
 					|| _cachedStyle == null)
 				{
 					return _aspectRatio.Value;
@@ -2144,7 +2144,7 @@ namespace Better.Commons.Runtime.Helpers.Styles
 		{
 			get
 			{
-				if (_unityMaterial.HasValue
+				if (_filter.HasValue
 					|| _cachedStyle == null)
 				{
 					return _filter.Value;
